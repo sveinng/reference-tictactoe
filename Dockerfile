@@ -5,7 +5,7 @@ EXPOSE 3000
 
 # Install yarn from the local .tgz
 RUN mkdir -p /opt
-ADD yarn-0.17.9.tar.gz /opt/
+ADD yarn-v0.17.9.tar.gz /opt/
 RUN mv /opt/dist /opt/yarn
 ENV PATH "$PATH:/opt/yarn/bin"
 

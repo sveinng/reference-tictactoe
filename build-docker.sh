@@ -42,14 +42,14 @@ _EOF_
 
 
 cp ./Dockerfile ./dist/
-cp yarn-0.17.9.tar.gz ./dist/
 cp package.json ./dist/
 cp -r ./build ./dist/
 
 # Prepare Yarn - binary - lock and cache
 [ ! -f yarn.lock ] && touch yarn.lock
 [ ! -f .yarn-cache.tgz ] && touch tar cvzf .yarn-cache.tgz --files-from /dev/null
-cp yarn.lock .yarn-cache.tgz ./dist/
+[ ! -f yarn-v0.17.9.tar.gz ] && wget https://github.com/yarnpkg/yarn/releases/download/v0.17.9/yarn-v0.17.9.tar.gz
+cp yarn.lock .yarn-cache.tgz yarn-v0.17.9.tar.gz ./dist/
 
 cd dist
 echo Building docker image
