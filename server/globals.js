@@ -15,6 +15,9 @@ global.inject = _require('framework/inject');
 
 if(process.env.NODE_ENV!=='production'){
     global.console.debug = global.console.log;
+} else {
+    // console.debug is not available in modern node.js
+    global.console.debug = global.console.log;
 }
 
 Path = require('path');
