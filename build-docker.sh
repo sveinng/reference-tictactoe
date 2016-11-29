@@ -69,6 +69,9 @@ if [[ $rc != 0 ]] ; then
     exit $rc
 fi
 
+echo Tag docker image as latest
+docker tag sveinn/tictactoe:$GIT_COMMIT sveinn/tictactoe:latest
+
 echo Refreshing Yarn lock and cache
 docker run --rm --entrypoint cat sveinn/tictactoe:$GIT_COMMIT /tmp/yarn.lock > /tmp/yarn.lock
 if ! diff -q yarn.lock /tmp/yarn.lock > /dev/null  2>&1; then
