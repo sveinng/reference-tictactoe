@@ -74,15 +74,6 @@ if [[ $rc != 0 ]] ; then
 fi
 
 
-# Promote build as latest - should be done after succesful testing
-docker push sveinn/tictactoe:latest
-rc=$?
-if [[ $rc != 0 ]] ; then
-    echo "Docker push latest failed " $rc
-    exit $rc
-fi
-
-
 echo Refreshing Yarn lock and cache
 cd ../
 docker run --rm --entrypoint cat sveinn/tictactoe:$GIT_COMMIT /tmp/yarn.lock > /tmp/yarn.lock
