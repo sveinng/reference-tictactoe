@@ -28,5 +28,6 @@ sudo chmod +x /usr/local/bin/docker-compose
 sudo usermod -a -G docker ubuntu
 
 # Fetch latest docker-compose.yaml and start dockers
-curl https://github.com/sveinng/reference-tictactoe/blob/master/docker-compose.yaml
-/usr/local/bin/docker-compose up -d
+curl -sS https://github.com/sveinng/reference-tictactoe/blob/master/docker-compose-env.yaml
+curl -sS https://github.com/sveinng/reference-tictactoe/blob/master/run-compose.sh
+bash run-compose.sh
