@@ -27,3 +27,6 @@ sudo chmod +x /usr/local/bin/docker-compose
 # Add ubuntu user to Docker group
 sudo usermod -a -G docker ubuntu
 
+# Fetch latest docker-compose.yaml and start dockers
+curl https://github.com/sveinng/reference-tictactoe/blob/master/docker-compose.yaml
+/usr/local/bin/docker-compose up -d
