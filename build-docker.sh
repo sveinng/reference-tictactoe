@@ -70,7 +70,7 @@ if [[ $rc != 0 ]] ; then
 fi
 
 echo Tag docker image as latest
-docker rmi sveinn/tictactoe:latest
+docker rmi --no-prune sveinn/tictactoe:latest
 docker tag sveinn/tictactoe:$GIT_COMMIT sveinn/tictactoe:latest
 
 echo Refreshing Yarn lock and cache
