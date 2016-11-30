@@ -10,7 +10,11 @@ if [ -z "$GIT_COMMIT" ]; then
 fi
 
 # Remove .git from url in order to get https link to repo (assumes https url for GitHub)
-export GITHUB_URL=$(echo $GIT_URL | rev | cut -c 5- | rev)
+#export GITHUB_URL=$(echo $GIT_URL | rev | cut -c 5- | rev)
+
+# Not using https origin - so diffrent fix
+export GITHUB_URL=$(echo $GIT_URL awk -F\: '{print "https://github.com/" $2}' | rev | cut -c 5- | rev)
+
 
 
 echo Building app
@@ -54,7 +58,7 @@ cp yarn.lock .yarn-cache.tgz yarn-v0.17.9.tar.gz ./dist/
 cd dist
 echo Building docker image
 
-docker build -t sveinn/tictactoe:$GIT_COMMIT .
+docker build -t sveinn/tictactoe:$GIT_COMMIT -t sveinn/tictactoe:latest .
 
 rc=$?
 if [[ $rc != 0 ]] ; then
@@ -69,20 +73,29 @@ if [[ $rc != 0 ]] ; then
     exit $rc
 fi
 
-echo Tag docker image as latest
-docker rmi --no-prune sveinn/tictactoe:latest
-docker tag sveinn/tictactoe:$GIT_COMMIT sveinn/tictactoe:latest
+
+# Promote build as latest - should be done after succesful testing
+docker push sveinn/tictactoe:latest
+rc=$?
+if [[ $rc != 0 ]] ; then
+    echo "Docker push latest failed " $rc
+    exit $rc
+fi
+
 
 echo Refreshing Yarn lock and cache
 cd ../
-docker run --rm --entrypoint cat sveinn/tictactoe:latest /tmp/yarn.lock > /tmp/yarn.lock
+docker run --rm --entrypoint cat sveinn/tictactoe:$GIT_COMMIT /tmp/yarn.lock > /tmp/yarn.lock
 if ! diff -q yarn.lock /tmp/yarn.lock > /dev/null  2>&1; then
   echo "Saving Yarn cache"
-  docker run --rm --entrypoint tar sveinn/tictactoe:latest czf - /root/.cache/yarn/ > .yarn-cache.tgz
+  docker run --rm --entrypoint tar sveinn/tictactoe:$GIT_COMMIT czf - /root/.cache/yarn/ > .yarn-cache.tgz
   echo "Saving yarn.lock"
   cp /tmp/yarn.lock yarn.lock
 fi
 
-
+# Create docker-compose settings for this specific build
+echo Create docker-compose for $GIT_COMMIT
+[ ! -d compose ] && mkdir compose
+sed s/sveinn\\/tictactoe/sveinn\\/tictactoe:$GIT_COMMIT/g docker-compose.yaml > compose/docker-compose-$GIT_COMMIT.yaml
 
 echo "Done"

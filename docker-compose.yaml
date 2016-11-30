@@ -15,6 +15,8 @@ services:
       - '8080:8080'
     links:
       - 'pg-prod'
+    depends_on:
+      - "pg-prod"
   pg-prod:
     container_name: ttt-database
     environment:

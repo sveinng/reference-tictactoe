@@ -1,7 +1,7 @@
 {
   "name": "tictactoe",
   "version": "1.0.0",
-  "description": "Evil tictactoe app",
+  "description": "RU Evil tictactoe app",
   "private": true,
   "main": "run.js",
   "dependencies": {
