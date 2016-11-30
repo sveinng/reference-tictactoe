@@ -47,7 +47,7 @@ cp -r ./build ./dist/
 
 # Prepare Yarn - binary - lock and cache
 [ ! -f yarn.lock ] && touch yarn.lock
-[ ! -f .yarn-cache.tgz ] && touch tar cvzf .yarn-cache.tgz --files-from /dev/null
+[ ! -f .yarn-cache.tgz ] && tar cvzf .yarn-cache.tgz --files-from /dev/null
 [ ! -f yarn-v0.17.9.tar.gz ] && wget https://github.com/yarnpkg/yarn/releases/download/v0.17.9/yarn-v0.17.9.tar.gz
 cp yarn.lock .yarn-cache.tgz yarn-v0.17.9.tar.gz ./dist/
 
@@ -74,10 +74,11 @@ docker rmi sveinn/tictactoe:latest
 docker tag sveinn/tictactoe:$GIT_COMMIT sveinn/tictactoe:latest
 
 echo Refreshing Yarn lock and cache
-docker run --rm --entrypoint cat sveinn/tictactoe:$GIT_COMMIT /tmp/yarn.lock > /tmp/yarn.lock
+cd ../
+docker run --rm --entrypoint cat sveinn/tictactoe:latest /tmp/yarn.lock > /tmp/yarn.lock
 if ! diff -q yarn.lock /tmp/yarn.lock > /dev/null  2>&1; then
   echo "Saving Yarn cache"
-  docker run --rm --entrypoint tar yarn-demo:latest czf - /root/.cache/yarn/ > .yarn-cache.tgz
+  docker run --rm --entrypoint tar sveinn/tictactoe:latest czf - /root/.cache/yarn/ > .yarn-cache.tgz
   echo "Saving yarn.lock"
   cp /tmp/yarn.lock yarn.lock
 fi

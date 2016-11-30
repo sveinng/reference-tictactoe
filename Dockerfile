@@ -14,7 +14,7 @@ ADD package.json yarn.lock /tmp/
 ADD .yarn-cache.tgz /
 
 # Install packages using Yarn
-RUN cd /tmp && yarn
+RUN cd /tmp && yarn install --production
 RUN yarn global add nodemon
 RUN mkdir -p /opt/app && cd /opt/app && ln -s /tmp/node_modules && ln -s /tmp/package.json
 
