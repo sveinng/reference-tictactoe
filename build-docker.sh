@@ -58,8 +58,7 @@ cp yarn.lock .yarn-cache.tgz yarn-v0.17.9.tar.gz ./dist/
 cd dist
 echo Building docker image
 
-docker build -t sveinn/tictactoe:$GIT_COMMIT -t sveinn/tictactoe:latest .
-
+docker build -t sveinn/tictactoe:$GIT_COMMIT .
 rc=$?
 if [[ $rc != 0 ]] ; then
     echo "Docker build failed " $rc
@@ -88,5 +87,9 @@ fi
 echo Create docker-compose for $GIT_COMMIT
 [ ! -d compose ] && mkdir compose
 sed s/sveinn\\/tictactoe/sveinn\\/tictactoe:$GIT_COMMIT/g docker-compose.yaml > compose/docker-compose-$GIT_COMMIT.yaml
+
+# Update AWS bootstrap GIT revision tag
+echo Update aws_bootstrap to include current git revision tag
+sed s/GIT_COMMIT_PLACEHOLDER/$GIT_COMMIT/g provisioning/aws_bootstrap.template > provisioning/aws_bootstrap.sh
 
 echo "Done"
