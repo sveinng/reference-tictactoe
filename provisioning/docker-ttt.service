@@ -1,0 +1,13 @@
+[Unit]
+Description=TicTacToe service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/home/ubuntu/run-compose.sh
+ExecStop=/home/ubuntu/stop-compose.sh
+
+[Install]
+WantedBy=default.target
+

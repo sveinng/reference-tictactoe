@@ -30,12 +30,17 @@ usermod -a -G docker ubuntu
 # Fetch latest docker-compose.yaml and start dockers
 echo "*** Fetching docker-composer scripts"
 cd /home/ubuntu/
-wget https://raw.githubusercontent.com/sveinng/reference-tictactoe/master/docker-compose-env.yaml
-wget https://raw.githubusercontent.com/sveinng/reference-tictactoe/master/run-compose.sh
+wget -q https://raw.githubusercontent.com/sveinng/reference-tictactoe/master/docker-compose-env.yaml
+wget -q https://raw.githubusercontent.com/sveinng/reference-tictactoe/master/provisioning/run-compose.sh
+wget -q https://raw.githubusercontent.com/sveinng/reference-tictactoe/master/provisioning/stop-compose.sh
 
 echo "*** Fixing ownership and permissions"
-chown ubuntu docker-compose-env.yaml run-compose.sh
-chmod +x run-compose.sh
+chown ubuntu docker-compose-env.yaml run-compose.sh stop-compose.sh
+chmod +x run-compose.sh stop-compose.sh
 
-echo "*** Executing run-compose.sh"
-su - ubuntu -c /home/ubuntu/run-compose.sh
+echo "*** Configuring systemd to control docker"
+wget -qP /etc/systemd/system https://raw.githubusercontent.com/sveinng/reference-tictactoe/master/provisioning/docker-ttt.service
+systemctl enable docker-ttt.service
+
+echo "*** All done - lets reboot and get to business!"
+reboot
