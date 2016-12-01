@@ -35,7 +35,7 @@ GIT_COMMIT_PLACEHOLDER
 EOF
 
 cat <<EOF > /etc/profile.d/docker_prod_tag.sh
-PROD_TAG=$(cat ~ubuntu/prod.tag)
+export PROD_TAG=$(cat ~ubuntu/prod.tag)
 EOF
 
 cat <<'EOF' > ~ubuntu/docker-compose.yaml
