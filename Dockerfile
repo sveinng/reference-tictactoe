@@ -1,7 +1,7 @@
 FROM node
 MAINTAINER Sveinn G. Gunnarsson <sveinng@gmail.com>
 WORKDIR /opt/app
-EXPOSE 8080
+EXPOSE 80
 
 # Install yarn from the local .tgz
 RUN mkdir -p /opt
