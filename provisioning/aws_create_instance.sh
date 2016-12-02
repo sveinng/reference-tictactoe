@@ -1,13 +1,14 @@
 #!/bin/bash
 #
-# Create AWS instance with Ubuntu 16.04 image and bootstrap with aws_bootstrap.sh script
+# Provision AWS ec2 instance and pull docker images to run TicTacToe
 #
+# The following AWS OS images are available
+# ami-0d77397e -> Ubuntu Server 16.04 LTS (HVM), SSD Volume Type
+# ami-9398d3e0 -> Amazon Linux AMI 2016.09.0 (HVM), SSD Volume Type
+
 
 ###############################################################################################
 # Config part
-
-# OS image to use - ami-0d77397e is Ubuntu 16.04 64-bit
-IMAGE_ID="ami-0d77397e"
 
 # Number of instances to create
 COUNT=1
@@ -30,12 +31,57 @@ USER_DATA="file://aws_bootstrap.sh"
 # Allocation ID - id of Elastic IP - eipalloc-a5ffd0c1 has the public IP : 52.209.246.223
 ALLOCATION_ID="eipalloc-a5ffd0c1"
 
-# Max wait time for instance to become running - Each TRY equals 5 seconds -> 12 try = 60 sec
-MAX_TRY=12
+# Max wait time for instance to become running in seconds (not counting aws cli runtime)
+MAX_WAIT=60
+
+
+###############################################################################################
+# CLI part
+
+if [[ ! $# -eq 2 ]] ; then
+  printf "\n\t usage $0 <git revision> <aws image id>"
+  printf "\n\t git revision: use full git revision string or latest for latest git revision"
+  printf "\n\t aws image id: available images are"
+  printf "\n\t\t ami-0d77397e -> Ubuntu Server 16.04 LTS (HVM), SSD Volume Type"
+  printf "\n\t\t ami-9398d3e0 -> Amazon Linux AMI 2016.09.0 (HVM), SSD Volume Type"
+  printf "\n\n"
+  exit
+fi
+
+GIT_REV=$1
+IMAGE_ID=$2
+
+
+###############################################################################################
+# Validate input
+
+if [ $GIT_REV = "latest" ] ; then
+  GIT_REV=$(git rev-parse HEAD)
+  echo "*** - Latest git revision is : $GIT_REV"
+else
+  if ! git rev-list HEAD | grep $GIT_REV >/dev/null 2>&1 ; then
+    echo "ERR - git revision not found info revision list"
+    echo "...abort..."
+    exit
+  else
+    echo "*** - Git revision validated"
+  fi
+fi
+
+if [[ $IMAGE_ID = "ami-0d77397e" || $IMAGE_ID = "ami-9398d3e0" ]] ; then
+  echo "*** - Valid AWS Image"
+else
+  echo "ERR - Invalid AWS image ID"
+  echo "...abort..."
+  exit
+fi
 
 
 ###############################################################################################
 # Running part
+
+# Create bootstrap script for give image
+sed s/GIT_COMMIT_PLACEHOLDER/$GIT_REV/g template/aws_bootstrap.$IMAGE_ID > aws_bootstrap.sh
 
 # Create ec2 instance and collect results
 RES=$(aws ec2 run-instances --image-id $IMAGE_ID --count $COUNT --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --subnet-id $SUBNET_ID --security-group-ids $SEC_GRP_ID --user-data $USER_DATA)
@@ -46,47 +92,48 @@ RESULT_INSTANCE_ID=$(echo "$RES" | awk '/^INSTANCE/ {print $7}')
 
 # Double check to see if new ec2 instance was created from correct image
 if [[ $RESULT_IMAGE = $IMAGE_ID ]] ; then
-  echo "*** ec2 instance created"
+  echo "*** - ec2 instance created"
 else
-  echo "*** ec2 instance created with strange image id: $RESULT_IMAGE - something went wrong!"
+  echo "ERR - ec2 instance created with strange image id: $RESULT_IMAGE - something went wrong!"
   echo "...abort..."
   exit 1
 fi
 
 
-let TRY=0
+let WAIT=0
 STATUS="pending"
-echo "*** waiting for instance to enter running state"
-printf "*** "
+echo "*** - waiting for instance to enter running state"
+printf "*** - "
 
 while [[ $STATUS != "running" ]] ; do
-  sleep 5
+  sleep 5 ; let WAIT=$WAIT+5
   STATUS=$(aws ec2 describe-instance-status --instance-ids $RESULT_INSTANCE_ID | awk  '/^INSTANCESTATE/ {print $3}')
-  if [[ $TRY -gt $MAX_TRY ]] ; then
-    echo "*** Gave up waiting for ec2 instance"
+  if [[ $WAIT -gt $MAX_WAIT ]] ; then
+    echo "ERR - Gave up waiting for ec2 instance"
     echo "...abort..."
     exit 2
   fi
-  let TRY=$TRY+1
-  printf ":"
+  printf "..$WAIT sec.. "
 done
 
 echo
-echo "*** ec2 instance has entered running state"
+echo "*** - ec2 instance has entered running state"
 
 
 # Assign Elastic IP to newly created ec2 instance
 RES=$(aws ec2 associate-address --instance-id $RESULT_INSTANCE_ID --allocation-id $ALLOCATION_ID)
 if [[ $? -ne 0 ]] ; then
-  echo "*** Something went wrong ... Could not attach public IP to ec2 instance : $RESULT_INSTANCE_ID"
-  echo "*** $RES"
+  echo "ERR - Something went wrong ... Could not attach public IP to ec2 instance : $RESULT_INSTANCE_ID"
+  echo "ERR - $RES"
+  echo "...abort..."
   exit 3
 else
-  echo "*** Instance assigned to public ip : 52.209.246.223"
+  echo "*** - Instance assigned to public ip : 52.209.246.223"
 fi
 
 
-echo "*** Successfully created ec2 instance: $RESULT_INSTANCE_ID @ 52.209.246.223"
-echo "*** It should be fully upgraded and operating in 4-5 minutes"
+echo "*** - Successfully created ec2 instance: $RESULT_INSTANCE_ID @ 52.209.246.223"
+echo "*** - It should be fully upgraded and operating in 4-5 minutes"
 
+rm aws_bootstrap.sh
 exit 0

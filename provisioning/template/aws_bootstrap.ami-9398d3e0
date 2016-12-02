@@ -1,0 +1,118 @@
+#!/bin/bash
+#
+# Bootstrap AWS Ubuntu server for running Docker instance
+#
+
+# Basic update and install docker stuff
+yum update -y
+yum install docker -y
+service docker start
+curl -L "https://github.com/docker/compose/releases/download/1.9.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+
+# Add ec2-user user to Docker group
+usermod -aG docker ec2-user
+
+
+# Create run scripts
+echo "*** Creating run scripts"
+
+cat <<EOF > ~ec2-user/prod.tag
+GIT_COMMIT_PLACEHOLDER
+EOF
+
+cat <<EOF > /etc/profile.d/docker_prod_tag.sh
+export PROD_TAG=$(cat ~ec2-user/prod.tag)
+EOF
+
+cat <<'EOF' > ~ec2-user/docker-compose.yaml
+version: '2'
+services:
+  server:
+    container_name: ttt-server
+    environment:
+      - 'PORT=80'
+      - 'NODE_ENV=production'
+      - 'DATABASE_PROD_USER=postgres'
+      - 'DATABASE_PROD_PASS=CVakcK22D4pntv7Y'
+      - 'DATABASE_PROD_HOST=pg-prod'
+    image: 'sveinn/tictactoe:$PROD_TAG'
+    build:
+      context: '.'
+      dockerfile: 'Dockerfile'
+    ports:
+      - '80:80'
+    links:
+      - 'pg-prod'
+    depends_on:
+      - "pg-prod"
+  pg-prod:
+    container_name: ttt-database
+    environment:
+      - 'POSTGRES_PASSWORD=CVakcK22D4pntv7Y'
+    image: postgres
+EOF
+
+cat <<'EOF' > /etc/init.d/dockercompose
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:		dockercompose
+# Required-Start:	$docker
+# Required-Stop:	$docker
+# Default-Start:	2 3 4 5
+# Default-Stop:		0 1 6
+# Short-Description:	Docker Services
+### END INIT INFO
+
+PROJECT_NAME=TicTacToe
+PROGRAM=/usr/local/bin/docker-compose
+YAMLFILE=~ec2-user/docker-compose.yaml
+OPTS="-f $YAMLFILE -p $PROJECT_NAME"
+UPOPTS="-d --no-recreate --no-build --no-deps"
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+. /etc/profile.d/docker_prod_tag.sh
+
+set -e
+
+case "$1" in
+    start)
+        echo "Starting Docker Compose" 
+        $PROGRAM $OPTS pull
+        $PROGRAM $OPTS up $UPOPTS
+        ;;
+
+    stop)
+        echo "Stopping Docker Compose"
+        $PROGRAM $OPTS stop
+        ;;
+
+    reload)
+        echo "Reloading Docker Compose"
+        $PROGRAM $OPTS up $UPOPTS
+        ;;
+
+    restart)
+        $PROGRAM $OPTS stop
+        $PROGRAM $OPTS up $UPOPTS
+        ;;
+
+    *)
+        echo "Usage: /etc/init.d/dockercompose {start|stop|restart|reload}" 
+        exit 1
+        ;;
+esac
+exit 0
+EOF
+
+echo "*** Fixing ownership and permissions"
+chown ec2-user:ec2-user ~ec2-user/docker-compose.yaml ~ec2-user/prod.tag
+chmod 755 /etc/init.d/dockercompose
+
+echo "*** Configuring docker compose autostart"
+chkconfig --add dockercompose
+
+echo "*** All done - start dockers"
+service dockercompose start
