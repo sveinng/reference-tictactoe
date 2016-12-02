@@ -7,6 +7,11 @@
 # ami-9398d3e0 -> Amazon Linux AMI 2016.09.0 (HVM), SSD Volume Type
 
 
+abort() {
+  echo "...abort..."
+  exit 1
+}
+
 ###############################################################################################
 # Config part
 
@@ -55,25 +60,36 @@ IMAGE_ID=$2
 ###############################################################################################
 # Validate input
 
+# Check if GIT tag really exists in git
 if [ $GIT_REV = "latest" ] ; then
   GIT_REV=$(git rev-parse HEAD)
   echo "*** - Latest git revision is : $GIT_REV"
 else
   if ! git rev-list HEAD | grep $GIT_REV >/dev/null 2>&1 ; then
     echo "ERR - git revision not found info revision list"
-    echo "...abort..."
-    exit
+    abort
   else
     echo "*** - Git revision validated"
   fi
 fi
 
-if [[ $IMAGE_ID = "ami-0d77397e" || $IMAGE_ID = "ami-9398d3e0" ]] ; then
+
+# Check if docker repo has image with given tag
+curl -si https://registry.hub.docker.com/v2/repositories/sveinn/tictactoe/tags/$GIT_REV/|grep "200 OK" > /dev/null 2>&1
+if [ $? -eq 0 ] ; then
+  echo "*** - Docker repo image found"
+else
+  echo "ERR - Docker repo does not contain image with tag: $GIT_REV"
+  echo "ERR - Did you forget to run build-docker.sh after doing a git push?"
+  abort
+fi
+
+# Check if bootstrap template exists for id
+if [ -e template/*.$IMAGE_ID ] ; then
   echo "*** - Valid AWS Image"
 else
   echo "ERR - Invalid AWS image ID"
-  echo "...abort..."
-  exit
+  abort
 fi
 
 
@@ -95,8 +111,7 @@ if [[ $RESULT_IMAGE = $IMAGE_ID ]] ; then
   echo "*** - ec2 instance created"
 else
   echo "ERR - ec2 instance created with strange image id: $RESULT_IMAGE - something went wrong!"
-  echo "...abort..."
-  exit 1
+  abort
 fi
 
 
@@ -110,8 +125,7 @@ while [[ $STATUS != "running" ]] ; do
   STATUS=$(aws ec2 describe-instance-status --instance-ids $RESULT_INSTANCE_ID | awk  '/^INSTANCESTATE/ {print $3}')
   if [[ $WAIT -gt $MAX_WAIT ]] ; then
     echo "ERR - Gave up waiting for ec2 instance"
-    echo "...abort..."
-    exit 2
+    abort
   fi
   printf "..$WAIT sec.. "
 done
@@ -125,8 +139,7 @@ RES=$(aws ec2 associate-address --instance-id $RESULT_INSTANCE_ID --allocation-i
 if [[ $? -ne 0 ]] ; then
   echo "ERR - Something went wrong ... Could not attach public IP to ec2 instance : $RESULT_INSTANCE_ID"
   echo "ERR - $RES"
-  echo "...abort..."
-  exit 3
+  abort
 else
   echo "*** - Instance assigned to public ip : 52.209.246.223"
 fi
