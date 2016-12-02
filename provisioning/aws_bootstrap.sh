@@ -31,7 +31,7 @@ usermod -a -G docker ubuntu
 echo "*** Creating run scripts"
 
 cat <<EOF > ~ubuntu/prod.tag
-5967784bff9ef45586dad7c120cb149e6110d79a
+be2eec827d38d837a7dbdc13327c0cd32e89a206
 EOF
 
 cat <<EOF > /etc/profile.d/docker_prod_tag.sh
@@ -44,6 +44,7 @@ services:
   server:
     container_name: ttt-server
     environment:
+      - 'PORT=80'
       - 'NODE_ENV=production'
       - 'DATABASE_PROD_USER=postgres'
       - 'DATABASE_PROD_PASS=CVakcK22D4pntv7Y'
@@ -71,7 +72,7 @@ cat <<'EOF' > ~ubuntu/run-compose.sh
 
 export PROD_TAG=$(cat ~ubuntu/prod.tag)
 docker-compose -f ~ubuntu/docker-compose.yaml pull
-docker-compose -f ~ubuntu/docker-compose.yaml up -d
+docker-compose -f ~ubuntu/docker-compose.yaml up
 EOF
 
 cat <<'EOF' > ~ubuntu/stop-compose.sh

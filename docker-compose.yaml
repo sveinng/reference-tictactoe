@@ -3,6 +3,7 @@ services:
   server:
     container_name: ttt-server
     environment:
+      - 'PORT=80'
       - 'NODE_ENV=production'
       - 'DATABASE_PROD_USER=postgres'
       - 'DATABASE_PROD_PASS=CVakcK22D4pntv7Y'
@@ -12,7 +13,7 @@ services:
       context: '.'
       dockerfile: 'Dockerfile'
     ports:
-      - '8080:8080'
+      - '80:80'
     links:
       - 'pg-prod'
     depends_on:
