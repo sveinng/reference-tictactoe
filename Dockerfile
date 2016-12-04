@@ -9,7 +9,7 @@ ADD yarn-v0.17.9.tar.gz /opt/
 RUN mv /opt/dist /opt/yarn
 ENV PATH "$PATH:/opt/yarn/bin"
 
-# Prepare package installation
+# Prepare package installation, yarn.lock and yarn-cache (to speed things up)
 ADD package.json yarn.lock /tmp/
 ADD .yarn-cache.tgz /
 

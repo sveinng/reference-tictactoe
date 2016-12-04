@@ -1,25 +1,25 @@
 version: '2'
 services:
   server:
-    container_name: ttt-server
-    environment:
-      - 'PORT=80'
-      - 'NODE_ENV=production'
-      - 'DATABASE_PROD_USER=postgres'
+    container_name: ttt-server         # Set name of the container
+    environment:                       # Set exported env. variables
+      - 'PORT=80'                      # Listening port for the http server
+      - 'NODE_ENV=production'          # Runtime mode of the server
+      - 'DATABASE_PROD_USER=postgres'  # Productin DB user/pass/host info
       - 'DATABASE_PROD_PASS=CVakcK22D4pntv7Y'
       - 'DATABASE_PROD_HOST=pg-prod'
-    image: 'sveinn/tictactoe'
-    build:
+    image: 'sveinn/tictactoe'          # Define which image to use
+    build:                             # Build info if needed
       context: '.'
       dockerfile: 'Dockerfile'
     ports:
-      - '80:80'
+      - '80:80'                        # Which port to expose (and map)
     links:
-      - 'pg-prod'
+      - 'pg-prod'                      # Build network link to pg-prod container
     depends_on:
-      - "pg-prod"
+      - "pg-prod"                      # Make container dependent on database (db starts first)
   pg-prod:
     container_name: ttt-database
     environment:
-      - 'POSTGRES_PASSWORD=CVakcK22D4pntv7Y'
+      - 'POSTGRES_PASSWORD=CVakcK22D4pntv7Y'   # Set the postgres password
     image: postgres
