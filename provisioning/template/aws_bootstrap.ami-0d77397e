@@ -46,9 +46,9 @@ services:
     environment:
       - 'PORT=80'
       - 'NODE_ENV=production'
-      - 'DATABASE_PROD_USER=postgres'
-      - 'DATABASE_PROD_PASS=CVakcK22D4pntv7Y'
-      - 'DATABASE_PROD_HOST=pg-prod'
+      - 'PGUSER=postgres'
+      - 'PGPASSWORD=CVakcK22D4pntv7Y'
+      - 'PGHOST=pg-prod'
     image: 'sveinn/tictactoe:$PROD_TAG'
     build:
       context: '.'

@@ -5,9 +5,9 @@ services:
     environment:                       # Set exported env. variables
       - 'PORT=80'                      # Listening port for the http server
       - 'NODE_ENV=production'          # Runtime mode of the server
-      - 'DATABASE_PROD_USER=postgres'  # Productin DB user/pass/host info
-      - 'DATABASE_PROD_PASS=CVakcK22D4pntv7Y'
-      - 'DATABASE_PROD_HOST=pg-prod'
+      - 'PGUSER=postgres'              # Productin DB user/pass/host info
+      - 'PGPASSWORD=CVakcK22D4pntv7Y'
+      - 'PGUSER=pg-prod'
     image: 'sveinn/tictactoe'          # Define which image to use
     build:                             # Build info if needed
       context: '.'
