@@ -12,9 +12,6 @@
   },
   "production": {
     "driver": "pg",
-#    "user": {"ENV": "DATABASE_PROD_USER"},
-#    "password": {"ENV": "DATABASE_PROD_PASS"},
-#    "host": {"ENV": "DATABASE_PROD_HOST"},
     "user": "postgres",
     "password": "CVakcK22D4pntv7Y",
     "host": "localhost",
