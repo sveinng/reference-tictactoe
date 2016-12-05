@@ -26,7 +26,7 @@ mkdir -p build/client/src
 # Build client part
 cd ./client
 export NODE_PATH=./src/
-react-scripts build
+node_modules/.bin/react-scripts build
 cd ..
 
 # Copy artifacts to build dir
