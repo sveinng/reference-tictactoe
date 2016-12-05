@@ -1,5 +1,16 @@
 #!/bin/bash
 
+
+# Exit on any error - no false positives
+set -e
+
+# Get current rundir (where script is executed from)
+RUNDIR=$(dirname $0)
+
+# If script is executed in the script directory - move up one level and work from project root
+[ $RUNDIR = "." ] && cd ..
+
+
 # Remove and recreate the dist directory
 echo Cleaning...
 rm -rf ./dist

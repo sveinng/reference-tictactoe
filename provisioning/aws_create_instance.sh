@@ -16,6 +16,18 @@ log() {
   echo "$(date "+%Y-%m-%d %H:%M:%S") - $1" | tee -a provision.log
 }
 
+
+
+###############################################################################################
+# Check current working directory
+
+# Get current rundir (where script is executed from)
+RUNDIR=$(dirname $0)
+
+# We want to run inside the provisioning directory
+[ $RUNDIR != "." ] && cd "$RUNDIR"
+
+
 ###############################################################################################
 # Config part
 

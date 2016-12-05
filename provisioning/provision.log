@@ -1,0 +1,168 @@
+2016-12-04 20:14:55 - Creating 1 x t2.micro instance from ami-9398d3e0 running sveinn/tictactoe:latest
+2016-12-04 20:14:55 - Latest git revision is : 9dd82c94818d88d58c5465c5b3849a27bae2715b
+2016-12-04 20:14:56 - Docker repo image found
+2016-12-04 20:14:56 - Valid AWS Image
+2016-12-04 20:14:58 - AWS ec2 instance created
+2016-12-04 20:14:58 - Waiting for instance to enter running state (max 60 sec)
+2016-12-04 20:15:03 - ..5 sec.. 
+2016-12-04 20:15:09 - ..10 sec.. 
+2016-12-04 20:15:15 - ..15 sec.. 
+2016-12-04 20:15:21 - ..20 sec.. 
+2016-12-04 20:15:21 - AWS ec2 instance has entered running state
+2016-12-04 20:15:22 - Instance assigned to Elastic IP
+2016-12-04 20:15:23 - Instance properly tagged
+2016-12-04 20:15:24 - Successfully created AWS ec2 instance: i-0e1263d9882a96eb7 @ 52.209.246.223
+2016-12-04 20:15:24 - It will be fully upgraded and operating within 4 minutes
+2016-12-04 20:35:39 - Creating 1 x t2.micro instance from ami-9398d3e0 running sveinn/tictactoe:latest
+2016-12-04 20:35:39 - Latest git revision is : 9dd82c94818d88d58c5465c5b3849a27bae2715b
+2016-12-04 20:35:40 - Docker repo image found
+2016-12-04 20:35:40 - Valid AWS Image
+2016-12-04 20:35:42 - AWS ec2 instance created
+2016-12-04 20:35:42 - Waiting for instance to enter running state (max 60 sec)
+2016-12-04 20:35:47 - ..5 sec.. 
+2016-12-04 20:35:53 - ..10 sec.. 
+2016-12-04 20:35:59 - ..15 sec.. 
+2016-12-04 20:36:05 - ..20 sec.. 
+2016-12-04 20:36:05 - AWS ec2 instance has entered running state
+2016-12-04 20:36:06 - Instance assigned to Elastic IP
+2016-12-04 20:36:07 - Instance properly tagged
+2016-12-04 20:36:08 - Successfully created AWS ec2 instance: i-0d728f254897244c9 @ 52.209.246.223
+2016-12-04 20:36:08 - It will be fully upgraded and operating within 4 minutes
+2016-12-04 20:36:08 - Use the following command to monitor the setup process
+2016-12-04 20:37:04 - Creating 1 x t2.micro instance from ami-9398d3e0 running sveinn/tictactoe:latest
+2016-12-04 20:37:04 - Latest git revision is : 9dd82c94818d88d58c5465c5b3849a27bae2715b
+2016-12-04 20:37:05 - Docker repo image found
+2016-12-04 20:37:05 - Valid AWS Image
+2016-12-04 20:37:06 - AWS ec2 instance created
+2016-12-04 20:37:06 - Waiting for instance to enter running state (max 60 sec)
+2016-12-04 20:37:12 - ..5 sec.. 
+2016-12-04 20:37:18 - ..10 sec.. 
+2016-12-04 20:37:24 - ..15 sec.. 
+2016-12-04 20:37:24 - AWS ec2 instance has entered running state
+2016-12-04 20:37:25 - Instance assigned to Elastic IP
+2016-12-04 20:37:26 - Instance properly tagged
+2016-12-04 20:37:27 - Successfully created AWS ec2 instance: i-01c848ae3bf75863b @ 52.209.246.223
+2016-12-04 20:37:27 - It will be fully upgraded and operating within 4 minutes
+2016-12-04 20:37:27 - Use the following command to monitor the setup process
+2016-12-04 20:38:07 - Creating 1 x t2.micro instance from ami-9398d3e0 running sveinn/tictactoe:latest
+2016-12-04 20:38:07 - Latest git revision is : 9dd82c94818d88d58c5465c5b3849a27bae2715b
+2016-12-04 20:38:07 - Docker repo image found
+2016-12-04 20:38:07 - Valid AWS Image
+2016-12-04 20:38:09 - AWS ec2 instance created
+2016-12-04 20:38:09 - Waiting for instance to enter running state (max 60 sec)
+2016-12-04 20:38:15 - ..5 sec.. 
+2016-12-04 20:38:21 - ..10 sec.. 
+2016-12-04 20:38:27 - ..15 sec.. 
+2016-12-04 20:38:27 - AWS ec2 instance has entered running state
+2016-12-04 20:38:28 - Instance assigned to Elastic IP
+2016-12-04 20:38:29 - Instance properly tagged
+2016-12-04 20:38:30 - Successfully created AWS ec2 instance: i-0150653d9d93d56bd @ 52.209.246.223
+2016-12-04 20:38:30 - It will be fully upgraded and operating within 4 minutes
+2016-12-04 20:38:30 - Use the following command to monitor the setup process
+2016-12-05 10:48:10 - Creating 1 x t2.micro instance from ami-0d77397e running sveinn/tictactoe:latest
+2016-12-05 10:48:11 - Latest git revision is : 9dd82c94818d88d58c5465c5b3849a27bae2715b
+2016-12-05 10:48:11 - Docker repo image found
+2016-12-05 10:48:11 - Valid AWS Image
+2016-12-05 10:48:15 - AWS ec2 instance created
+2016-12-05 10:48:15 - Waiting for instance to enter running state (max 60 sec)
+2016-12-05 10:48:20 - ..5 sec.. 
+2016-12-05 10:48:26 - ..10 sec.. 
+2016-12-05 10:48:26 - AWS ec2 instance has entered running state
+2016-12-05 10:48:27 - Instance assigned to Elastic IP
+2016-12-05 10:48:28 - Instance properly tagged
+2016-12-05 10:48:29 - Successfully created AWS ec2 instance: i-070064ffcd957054b @ /dev/sda1
+2016-12-05 10:48:29 - It will be fully upgraded and operating within 4 minutes
+2016-12-05 10:48:29 - Use the following command to monitor the setup process
+2016-12-05 14:05:41 - Creating 1 x t2.micro instance from ami-9398d3e0 running sveinn/tictactoe:latest
+2016-12-05 14:05:41 - Latest git revision is : d9261ff491a2d615a9f71c048298f60a87c38cb0
+2016-12-05 14:05:42 - Docker repo image found
+2016-12-05 14:05:42 - Valid AWS Image
+2016-12-05 14:05:44 - AWS ec2 instance created
+2016-12-05 14:05:44 - Waiting for instance to enter running state (max 60 sec)
+2016-12-05 14:05:50 - ..5 sec.. 
+2016-12-05 14:05:55 - ..10 sec.. 
+2016-12-05 14:05:55 - AWS ec2 instance has entered running state
+2016-12-05 14:05:57 - Instance assigned to Elastic IP
+2016-12-05 14:05:57 - Instance properly tagged
+2016-12-05 14:05:58 - Successfully created AWS ec2 instance: i-03e44f25fe9c99e01 @ 52.209.246.223
+2016-12-05 14:05:58 - It will be fully upgraded and operating within 4 minutes
+2016-12-05 14:05:58 - Use the following command to monitor the setup process
+2016-12-05 14:11:05 - Creating 1 x t2.micro instance from ami-9398d3e0 running sveinn/tictactoe:latest
+2016-12-05 14:11:05 - Latest git revision is : d9261ff491a2d615a9f71c048298f60a87c38cb0
+2016-12-05 14:11:06 - Docker repo image found
+2016-12-05 14:11:06 - Valid AWS Image
+2016-12-05 14:11:08 - AWS ec2 instance created
+2016-12-05 14:11:08 - Waiting for instance to enter running state (max 60 sec)
+2016-12-05 14:11:13 - ..5 sec.. 
+2016-12-05 14:11:19 - ..10 sec.. 
+2016-12-05 14:11:25 - ..15 sec.. 
+2016-12-05 14:11:25 - AWS ec2 instance has entered running state
+2016-12-05 14:11:26 - Instance assigned to Elastic IP
+2016-12-05 14:11:27 - Instance properly tagged
+2016-12-05 14:11:28 - Successfully created AWS ec2 instance: i-0df561c03bd4b47d4 @ 52.209.246.223
+2016-12-05 14:11:28 - It will be fully upgraded and operating within 4 minutes
+2016-12-05 14:11:28 - Use the following command to monitor the setup process
+2016-12-05 14:42:53 - Creating 1 x t2.micro instance from ami-9398d3e0 running sveinn/tictactoe:latest
+2016-12-05 14:42:53 - Latest git revision is : 6335cf28316102aba10fa7d0e2f80c90d0e7f927
+2016-12-05 14:42:54 - Docker repo image found
+2016-12-05 14:42:54 - Valid AWS Image
+2016-12-05 14:42:57 - AWS ec2 instance created
+2016-12-05 14:42:57 - Waiting for instance to enter running state (max 60 sec)
+2016-12-05 14:43:03 - ..5 sec.. 
+2016-12-05 14:43:08 - ..10 sec.. 
+2016-12-05 14:43:14 - ..15 sec.. 
+2016-12-05 14:43:20 - ..20 sec.. 
+2016-12-05 14:43:20 - AWS ec2 instance has entered running state
+2016-12-05 14:43:21 - Instance assigned to Elastic IP
+2016-12-05 14:43:22 - Instance properly tagged
+2016-12-05 14:43:23 - Successfully created AWS ec2 instance: i-036e0e2ad63903b8d @ 52.209.246.223
+2016-12-05 14:43:23 - It will be fully upgraded and operating within 4 minutes
+2016-12-05 14:43:23 - Use the following command to monitor the setup process
+2016-12-05 14:52:08 - Creating 1 x t2.micro instance from ami-9398d3e0 running sveinn/tictactoe:latest
+2016-12-05 14:52:08 - Latest git revision is : cd54e3df276c342d76a607a04650c72c57e2d23b
+2016-12-05 14:52:08 - Docker repo image found
+2016-12-05 14:52:08 - Valid AWS Image
+2016-12-05 14:52:11 - AWS ec2 instance created
+2016-12-05 14:52:11 - Waiting for instance to enter running state (max 60 sec)
+2016-12-05 14:52:16 - ..5 sec.. 
+2016-12-05 14:52:22 - ..10 sec.. 
+2016-12-05 14:52:22 - AWS ec2 instance has entered running state
+2016-12-05 14:52:24 - Instance assigned to Elastic IP
+2016-12-05 14:52:25 - Instance properly tagged
+2016-12-05 14:52:26 - Successfully created AWS ec2 instance: i-0cea42508a502a087 @ 52.209.246.223
+2016-12-05 14:52:26 - It will be fully upgraded and operating within 4 minutes
+2016-12-05 14:52:26 - Use the following command to monitor the setup process
+2016-12-05 15:08:05 - Creating 1 x t2.micro instance from ami-9398d3e0 running sveinn/tictactoe:latest
+2016-12-05 15:08:05 - Latest git revision is : 66e3c1211250cf579b92decccbd24be6cb5c0150
+2016-12-05 15:08:06 - Docker repo image found
+2016-12-05 15:08:06 - Valid AWS Image
+2016-12-05 15:08:08 - AWS ec2 instance created
+2016-12-05 15:08:08 - Waiting for instance to enter running state (max 60 sec)
+2016-12-05 15:08:14 - ..5 sec.. 
+2016-12-05 15:08:19 - ..10 sec.. 
+2016-12-05 15:08:25 - ..15 sec.. 
+2016-12-05 15:08:25 - AWS ec2 instance has entered running state
+2016-12-05 15:08:27 - Instance assigned to Elastic IP
+2016-12-05 15:08:28 - Instance properly tagged
+2016-12-05 15:08:29 - Successfully created AWS ec2 instance: i-092a73b82e6a7ed43 @ 52.209.246.223
+2016-12-05 15:08:29 - It will be fully upgraded and operating within 4 minutes
+2016-12-05 15:08:29 - Use the following command to monitor the setup process
+2016-12-05 15:14:16 - Creating 1 x t2.micro instance from ami-9398d3e0 running sveinn/tictactoe:latest
+2016-12-05 15:14:16 - Latest git revision is : 609c9f6f15dd320d6ab1bf0b0d6cfba37ed4322b
+2016-12-05 15:14:17 - Docker repo image found
+2016-12-05 15:14:17 - Valid AWS Image
+2016-12-05 15:14:19 - AWS ec2 instance created
+2016-12-05 15:14:19 - Waiting for instance to enter running state (max 60 sec)
+2016-12-05 15:14:26 - ..5 sec.. 
+2016-12-05 15:14:32 - ..10 sec.. 
+2016-12-05 15:14:38 - ..15 sec.. 
+2016-12-05 15:14:38 - AWS ec2 instance has entered running state
+2016-12-05 15:14:39 - Instance assigned to Elastic IP
+2016-12-05 15:14:40 - Instance properly tagged
+2016-12-05 15:14:41 - Successfully created AWS ec2 instance: i-063d039706bd8bdeb @ 52.209.246.223
+2016-12-05 15:14:41 - It will be fully upgraded and operating within 4 minutes
+2016-12-05 15:14:41 - Use the following command to monitor the setup process
+2016-12-05 15:53:47 - Creating 1 x t2.micro instance from ami-9398dasdf running sveinn/tictactoe:latest
+2016-12-05 15:53:47 - Latest git revision is : 609c9f6f15dd320d6ab1bf0b0d6cfba37ed4322b
+2016-12-05 15:53:48 - Docker repo image found
+2016-12-05 15:53:48 - ERR  Invalid AWS image ID
