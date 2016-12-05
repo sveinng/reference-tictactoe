@@ -12,6 +12,10 @@ abort() {
   exit 1
 }
 
+log() {
+  echo "$(date "+%Y-%m-%d %H:%M:%S") - $1" | tee -a provision.log
+}
+
 ###############################################################################################
 # Config part
 
@@ -64,16 +68,18 @@ IMAGE_ID=$2
 ###############################################################################################
 # Validate input
 
+log "Creating $COUNT x $INSTANCE_TYPE instance from $IMAGE_ID running sveinn/tictactoe:$GIT_REV"
+
 # Check if GIT tag really exists in git
 if [ $GIT_REV = "latest" ] ; then
   GIT_REV=$(git rev-parse HEAD)
-  echo "***  Latest git revision is : $GIT_REV"
+  log "Latest git revision is : $GIT_REV"
 else
   if ! git rev-list HEAD | grep $GIT_REV >/dev/null 2>&1 ; then
-    echo "ERR  git revision not found info revision list"
+    log "ERR  git revision not valid"
     abort
   else
-    echo "***  Git revision validated"
+    log "Git revision validated"
   fi
 fi
 
@@ -81,18 +87,18 @@ fi
 # Check if docker repo has image with given tag
 curl -si https://registry.hub.docker.com/v2/repositories/sveinn/tictactoe/tags/$GIT_REV/|grep "200 OK" > /dev/null 2>&1
 if [ $? -eq 0 ] ; then
-  echo "***  Docker repo image found"
+  log "Docker repo image found"
 else
-  echo "ERR  Docker repo does not contain image with tag: $GIT_REV"
-  echo "ERR  Did you forget to run build-docker.sh after doing a git push?"
+  log "ERR  Docker repo does not contain image with tag: $GIT_REV"
+  log "ERR  Did you forget to run build-docker.sh after doing a git push?"
   abort
 fi
 
 # Check if bootstrap template exists for id
 if [ -e template/*.$IMAGE_ID ] ; then
-  echo "***  Valid AWS Image"
+  log "Valid AWS Image"
 else
-  echo "ERR  Invalid AWS image ID"
+  log "ERR  Invalid AWS image ID"
   abort
 fi
 
@@ -112,51 +118,49 @@ RESULT_INSTANCE_ID=$(echo "$RES" | awk '/^INSTANCE/ {print $7}')
 
 # Double check to see if new ec2 instance was created from correct image
 if [[ $RESULT_IMAGE = $IMAGE_ID ]] ; then
-  echo "***  AWS ec2 instance created"
+  log "AWS ec2 instance created"
 else
-  echo "ERR  AWS ec2 instance created with strange image id: $RESULT_IMAGE - something went wrong!"
+  log "ERR  AWS ec2 instance created with strange image id: $RESULT_IMAGE - something went wrong!"
   abort
 fi
 
 
 let WAIT=0
 STATUS="pending"
-echo "***  Waiting for instance to enter running state"
-printf "***  "
+log "Waiting for instance to enter running state (max $MAX_WAIT sec)"
 
+# Wait for instance to enter the running state
 while [[ $STATUS != "running" ]] ; do
   sleep 5 ; let WAIT=$WAIT+5
   STATUS=$(aws ec2 describe-instance-status --instance-ids $RESULT_INSTANCE_ID | awk  '/^INSTANCESTATE/ {print $3}')
   if [[ $WAIT -gt $MAX_WAIT ]] ; then
-    echo "ERR  Gave up waiting for AWS ec2 instance"
+    log "ERR  Gave up waiting for AWS ec2 instance"
     abort
   fi
-  printf "..$WAIT sec.. "
+  log "..$WAIT sec.. "
 done
-
-echo
-echo "***  AWS ec2 instance has entered running state"
+log "AWS ec2 instance has entered running state"
 
 
 # Assign Elastic IP to newly created ec2 instance
 RES=$(aws ec2 associate-address --instance-id $RESULT_INSTANCE_ID --allocation-id $ALLOCATION_ID)
 if [[ $? -ne 0 ]] ; then
-  echo "ERR  Something went wrong ... Could not attach public IP to AWS ec2 instance : $RESULT_INSTANCE_ID"
-  echo "ERR  $RES"
+  log "ERR  Something went wrong ... Could not attach public IP to AWS ec2 instance : $RESULT_INSTANCE_ID"
+  log "ERR  $RES"
   abort
 else
-  echo "***  Instance assigned to Elastic IP"
+  log "Instance assigned to Elastic IP"
 fi
 
 
 # Tag newly created intance
 RES=$(aws ec2 create-tags --resources $RESULT_INSTANCE_ID --tags $AWS_TAG1 $AWS_TAG2)
 if [[ $? -ne 0 ]] ; then
-  echo "ERR  Something went wrong ... could not tag newly created instance"
-  echo "ERR  $RES"
+  log "ERR  Something went wrong ... could not tag newly created instance"
+  log "ERR  $RES"
   abort
 else
-  echo "***  Instance properly tagged"
+  log "Instance properly tagged"
 fi
 
 
@@ -164,8 +168,15 @@ fi
 IP=$(aws ec2 describe-instances --instance-ids $RESULT_INSTANCE_ID | awk '/^INSTANCES/ {print $15}')
 
 
-echo "***  Successfully created AWS ec2 instance: $RESULT_INSTANCE_ID @ $IP"
-echo "***  It should be fully upgraded and operating in 4-5 minutes"
+log "Successfully created AWS ec2 instance: $RESULT_INSTANCE_ID @ $IP"
+log "It will be fully upgraded and operating within 4 minutes"
+log "Use the following command to monitor the setup process"
+
+if [ $IMAGE_ID = "ami-0d77397e" ] ; then
+  printf 'ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no tictactoe.sveinng.com "tail -f /var/log/cloud-init-output.log"\n'
+else
+  printf 'ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no tictactoe.sveinng.com "tail -f /var/log/cloud-init-output.log"\n'
+fi
 
 rm aws_bootstrap.sh
 exit 0
