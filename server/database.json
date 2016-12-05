@@ -12,9 +12,9 @@
   },
   "production": {
     "driver": "pg",
-    "user": {"ENV": "PGUSER"},
-    "password": {"ENV": "PGPASSWORD"},
-    "host": {"ENV": "PGHOST"},
+    "user": "postgres",
+    "password": "CVakcK22D4pntv7Y",
+    "host": "pg-prod",
     "database": "postgres",
     "schema": "postgres",
     "port": 5432,
