@@ -12,7 +12,7 @@ RUNDIR=$(dirname $0)
 [ $RUNDIR = "." ] && cd ..
 
 #npm install
-yarn install --production
+yarn install
 
 cd client
 # NPM uses way to much ram and cpu - lets limit for our tiny CI server
