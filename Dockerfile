@@ -20,6 +20,6 @@ RUN mkdir -p /opt/app && cd /opt/app && ln -s /tmp/node_modules && ln -s /tmp/pa
 
 # Install build artifacts and run application
 ADD ./build/ .
-RUN cd /opt/app/client && npm install
+#RUN cd /opt/app/client && npm install
 ENV NODE_PATH /opt/app/
 CMD ["npm","run","start"]
