@@ -28,16 +28,18 @@ export GITHUB_URL=$(echo $GIT_URL awk -F\: '{print "https://github.com/" $2}' | 
 
 
 
+# Lets comment this out for now - builds are scripted through Jenkins
+#
 # Run the build script
-echo Building app
-npm run build
+#echo Building app
+#npm run build
 
 # If build script exit status is anything else than zero - assume build has failed and exit
-rc=$?
-if [[ $rc != 0 ]] ; then
-    echo "Npm build failed with exit code " $rc
-    exit $rc
-fi
+#rc=$?
+#if [[ $rc != 0 ]] ; then
+#    echo "Npm build failed with exit code " $rc
+#    exit $rc
+#fi
 
 
 # Write the git revision to a githash.txt file in the build directory
