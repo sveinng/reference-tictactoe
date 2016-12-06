@@ -45,7 +45,7 @@ node {
     catch (err) {
 
         currentBuild.result = "FAILURE"
-            slackSend channel: '#general', color: 'bad', message: 'project build error is here: ${env.BUILD_URL}', teamDomain: 'hgop-svenni', token: 'umbD47dpxzKNkL8XpaEe74Xx'
+            slackSend channel: '#general', color: 'bad', message: "project build error is here: ${env.BUILD_URL}", teamDomain: 'hgop-svenni', token: 'umbD47dpxzKNkL8XpaEe74Xx'
 
         throw err
     }
