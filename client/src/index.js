@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 
 import './index.css';
 
-import AppContextModule from "./appcontext";
+import AppContextModule from "./appContext";
 
 import _ from "lodash";
 
