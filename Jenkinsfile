@@ -1,7 +1,7 @@
 #!groovy
 
 
-node('node') {
+node {
 
     currentBuild.result = "SUCCESS"
 
