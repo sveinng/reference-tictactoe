@@ -36,14 +36,14 @@ node {
             sh 'npm prune'
             sh 'rm node_modules -rf'
 
-            slackSend channel: '#general', color: 'good', message: 'Slack Message', teamDomain: 'hgop-svenni', token: 'umbD47dpxzKNkL8XpaEe74Xx'
+            slackSend channel: '#general', color: 'good', message: 'Yeah - TicTacToe built OK - Latest version on AWS http://tictactoe.sveinng.com/', teamDomain: 'hgop-svenni', token: 'umbD47dpxzKNkL8XpaEe74Xx'
         }
 
 
     catch (err) {
 
         currentBuild.result = "FAILURE"
-            slackSend channel: '#general', color: 'bad', message: "project build error is here: ${env.BUILD_URL}", teamDomain: 'hgop-svenni', token: 'umbD47dpxzKNkL8XpaEe74Xx'
+            slackSend channel: '#general', color: 'bad', message: "TicTacToe build error - log is here: ${env.BUILD_URL}", teamDomain: 'hgop-svenni', token: 'umbD47dpxzKNkL8XpaEe74Xx'
 
         throw err
     }
