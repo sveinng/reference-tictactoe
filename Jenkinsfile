@@ -48,7 +48,7 @@ node {
 }
 
 
-def setBuildStatus(message, state){
+def setBuildStatus(message, String buildStatus = 'STARTED'){
   // build status of null means successful
   buildStatus =  buildStatus ?: 'SUCCESSFUL'
 
