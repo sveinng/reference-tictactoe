@@ -12,14 +12,14 @@ export NODE_PATH=.
 # Get current rundir (where script is executed from)
 RUNDIR=$(dirname $0)
 
-# If script is executed in the script directory - move up one level and work from project root
-[ $RUNDIR = "." ] && cd ..
+# Make sure we run at project root level
+[ ! $RUNDIR = "." ] && cd "$RUNDIR"
 
 # Wait for database to open
 sleep 5
 
 # Run database migration for production environment
-db-migrate --config ./server/database.json --migrations-dir ./server/migrations up -e production
+node_modules/.bin/db-migrate --config ./server/database.json --migrations-dir ./server/migrations up -e production
 
 # Start the server with nodemon
 nodemon run.js
