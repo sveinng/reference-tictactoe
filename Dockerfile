@@ -21,4 +21,4 @@ RUN mkdir -p /opt/app && cd /opt/app && ln -s /tmp/node_modules && ln -s /tmp/pa
 # Install build artifacts and run application
 ADD ./build/ .
 ENV NODE_PATH /opt/app/
-CMD ["runserver.sh"]
+CMD ["/bin/bash","runserver.sh"]
