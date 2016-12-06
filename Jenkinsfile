@@ -67,7 +67,7 @@ def notifyBuild(String buildStatus = 'STARTED') {
 
   // Default values
   def defChan = '#general'
-  def defTeam = 'hgop'svenni'
+  def defTeam = 'hgop-svenni'
   def defToken = 'umbD47dpxzKNkL8XpaEe74Xx'
   def colorName = 'bad'
   def msg = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
