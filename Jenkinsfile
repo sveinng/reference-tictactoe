@@ -33,6 +33,7 @@ node {
             echo 'prune and cleanup'
             sh 'npm prune'
             sh 'rm node_modules -rf'
+            setBuildStatus("Build complete", "SUCCESS")
 
     } catch (err) {
 
@@ -42,13 +43,12 @@ node {
     } finally {
 
         notifyBuild(currentBuild.result)
-        setBuildStatus("Build complete", currentBuild.result)
 
     }
 }
 
 
-def setBuildStatus(message, String buildStatus = 'STARTED'){
+def setBuildStatus(message,state){
   // build status of null means successful
   buildStatus =  buildStatus ?: 'SUCCESSFUL'
 
@@ -57,7 +57,7 @@ def setBuildStatus(message, String buildStatus = 'STARTED'){
       reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/sveinng/reference-tictactoe"],
       contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
       errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: buildStatus]] ]
+      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
   ])
 }
 
@@ -70,7 +70,7 @@ def notifyBuild(String buildStatus = 'STARTED') {
   def defTeam = 'hgop-svenni'
   def defToken = 'umbD47dpxzKNkL8XpaEe74Xx'
   def colorName = 'bad'
-  def msg = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+  def msg = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' - ${env.BUILD_URL}"
 
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
