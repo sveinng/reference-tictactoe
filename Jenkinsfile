@@ -28,7 +28,7 @@ node {
        stage 'Deploy'
 
             echo 'Delploy to AWS'
-            sh './provisioning/aws_create_instance.sh latest $(cat build/githash.txt)'
+            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0'
 
        stage 'Cleanup'
 
