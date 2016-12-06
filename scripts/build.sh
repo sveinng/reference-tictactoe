@@ -34,4 +34,4 @@ mv client/build build/static
 cp -R server build/server
 cp -r client/src/common build/client/src
 cp run.js build
-
+cp runserver.sh build
