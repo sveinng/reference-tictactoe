@@ -38,24 +38,14 @@ node {
             sh 'npm prune'
             sh 'rm node_modules -rf'
 
-            mail body: 'project build successful',
-                        from: 'sveinn@jenkins.sveinng.com',
-                        replyTo: 'sveinn@sveinng.com',
-                        subject: 'project build successful',
-                        to: 'sveinng@gmail.com'
-
+            slackSend channel: '#general', color: 'good', message: 'Slack Message', teamDomain: 'hgop-svenni', token: 'umbD47dpxzKNkL8XpaEe74Xx'
         }
 
 
     catch (err) {
 
         currentBuild.result = "FAILURE"
-
-            mail body: "project build error is here: ${env.BUILD_URL}" ,
-            from: 'sveinn@jenkins.sveinng.com',
-            replyTo: 'sveinn@sveinng.com',
-            subject: 'project build failed',
-            to: 'sveinng@gmail.com'
+            slackSend channel: '#general', color: 'bad', message: 'project build error is here: ${env.BUILD_URL}', teamDomain: 'hgop-svenni', token: 'umbD47dpxzKNkL8XpaEe74Xx'
 
         throw err
     }
