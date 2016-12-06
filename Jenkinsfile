@@ -3,12 +3,10 @@
 
 node {
 
-    currentBuild.result = "SUCCESS"
-
     try {
 
        stage 'Checkout'
-
+            notifyBuild('STARTED')
             checkout scm
 
        stage 'Test'
@@ -36,23 +34,24 @@ node {
             sh 'npm prune'
             sh 'rm node_modules -rf'
 
-            slackSend channel: '#general', color: 'good', message: 'Yeah - TicTacToe built OK - Latest version on AWS http://tictactoe.sveinng.com/', teamDomain: 'hgop-svenni', token: 'umbD47dpxzKNkL8XpaEe74Xx'
-            setBuildStatus("Build complete", "SUCCESS")
-        }
-
-
-    catch (err) {
+    } catch (err) {
 
         currentBuild.result = "FAILURE"
-            slackSend channel: '#general', color: 'bad', message: "TicTacToe build error - log is here: ${env.BUILD_URL}", teamDomain: 'hgop-svenni', token: 'umbD47dpxzKNkL8XpaEe74Xx'
-
         throw err
-    }
 
+    } finally {
+
+        notifyBuild(currentBuild.result)
+        setBuildStatus("Build complete", currentBuild.result)
+
+    }
 }
 
 
-def setBuildStatus(message,state){
+def setBuildStatus(message, state){
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESSFUL'
+
   step([
       $class: "GitHubCommitStatusSetter",
       reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/sveinng/reference-tictactoe"],
@@ -62,3 +61,26 @@ def setBuildStatus(message,state){
   ])
 }
 
+def notifyBuild(String buildStatus = 'STARTED') {
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESSFUL'
+
+  // Default values
+  def defChan = '#general'
+  def defTeam = 'hgop'svenni'
+  def defToken = 'umbD47dpxzKNkL8XpaEe74Xx'
+  def colorName = 'bad'
+  def msg = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+    colorName = 'warning'
+  } else if (buildStatus == 'SUCCESSFUL') {
+    colorName = 'good'
+  } else {
+    colorName = 'bad'
+  }
+
+  // Send Slack
+  slackSend (channel: defChan, color: colorName, message: msg, teamDomain: defTeam, token: defToken)
+}
