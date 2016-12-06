@@ -37,6 +37,7 @@ node {
             sh 'rm node_modules -rf'
 
             slackSend channel: '#general', color: 'good', message: 'Yeah - TicTacToe built OK - Latest version on AWS http://tictactoe.sveinng.com/', teamDomain: 'hgop-svenni', token: 'umbD47dpxzKNkL8XpaEe74Xx'
+            setBuildStatus("Build complete", "SUCCESS")
         }
 
 
@@ -49,3 +50,15 @@ node {
     }
 
 }
+
+
+def setBuildStatus(message,state){
+  step([
+      $class: "GitHubCommitStatusSetter",
+      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/glossary95/java-maven-junit-helloworld"],
+      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
+      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+  ])
+}
+
