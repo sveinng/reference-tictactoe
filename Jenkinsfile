@@ -14,12 +14,10 @@ node {
        stage 'Test'
 
             env.NODE_ENV = "test"
-
             print "Environment will be : ${env.NODE_ENV}"
 
             sh 'node -v'
-            sh 'npm prune'
-            sh 'npm install'
+            sh 'scripts/install-node-modules.sh'
             sh 'npm test'
 
        stage 'Build Docker'
