@@ -9,7 +9,6 @@ node {
 
        stage 'Checkout'
 
-            properties([pipelineTriggers([[$class: 'GitHubPushTrigger'], pollSCM('H/15 * * * *')])])
             checkout scm
 
        stage 'Test'
