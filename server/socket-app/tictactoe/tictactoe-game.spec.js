@@ -32,15 +32,6 @@ var eventJoinGame = {
   timeStamp: "2016-12-07T20:55:40"
 };
 
-var eventJoinGameThirdPlayer = {
-  type: "JoinGame",
-  user: {
-      userName: "Third Player"
-  },
-  name: "UberGame",
-  timeStamp: "2016-12-07T20:56:29"
-};
-
 var eventGameJoined = {
     type: "GameJoined",
     user: { userName: "Svenson" },
@@ -49,12 +40,24 @@ var eventGameJoined = {
     side:'O'
 };
 
+var eventJoinGameThirdPlayer = {
+  type: "JoinGame",
+  user: { userName: "Third Player" },
+  name: "UberGame",
+  timeStamp: "2016-12-07T20:56:29"
+};
+
+var eventFullGameJoinAttempted = {
+  type: "FullGameJoinAttempted",
+  user: { userName: "Third Player" },
+  name: "UberGame",
+  timeStamp: "2016-12-07T20:56:29"
+};
+
 
 describe('create game command', function() {
 
-
     var given, when, then;
-
     beforeEach(function(){
         given=undefined;
         when=undefined;
@@ -67,7 +70,6 @@ describe('create game command', function() {
         });
     });
 
-
     it('should emit game created event', function(){
         given = [];
         when = eventCreateGame;
@@ -78,9 +80,7 @@ describe('create game command', function() {
 
 describe('join game command', function () {
 
-
     var given, when, then;
-
     beforeEach(function () {
         given = undefined;
         when = undefined;
@@ -93,7 +93,6 @@ describe('join game command', function () {
         });
     });
 
-
     it('should emit game joined event...', function () {
         given = [ eventGameCreated ];
         when = eventJoinGame;
@@ -101,49 +100,8 @@ describe('join game command', function () {
     });
 
     it('should emit FullGameJoinAttempted event when game full', function () {
-
-      given = [{
-          type: "GameCreated",
-          user: {
-              userName: "Uber"
-          },
-          name: "UberGame",
-          timeStamp: "2016-12-07T11:29:29"
-      },
-      {
-          type: "JoinGame",
-          user: {
-              userName: "Svenson"
-          },
-          name: "UberGame",
-          timeStamp: "2016-12-07T11:29:29"
-      },
-      {
-          type: "GameJoined",
-          user: {
-              userName: "Svenson"
-          },
-          name: "UberGame",
-          timeStamp: "2016-12-07T11:29:29"
-      }];
-      when =
-      {
-          type: "JoinGame",
-          user: {
-              userName: "Smökk"
-          },
-          name: "GameJoined",
-          timeStamp: "2016-12-07T11:29:55"
-      };
-      then = [
-      {
-          type: "FullGameJoinAttempted",
-          user: {
-              userName: "Smökk"
-          },
-          name: "GameJoined",
-          timeStamp: "2016-12-07T11:29:55"
-      }
-      ];
+      given = [ eventGameCreated, eventJoinGame, eventGameJoined ];
+      when = eventJoinGameThirdPlayer;
+      then = [ eventFullGameJoinAttempted ];
     });
 });
