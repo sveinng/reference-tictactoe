@@ -1,12 +1,14 @@
 const TictactoeState = require('./tictactoe-state');
 const Tictactoe = require('./tictactoe-handler');
 const GameHandler = require('./game-handler');
+const CacheModule = require('./cache');
 
 module.exports=function(injected) {
     const generateUUID=injected('generateUUID');
     const commandRouter=injected('commandRouter');
     const eventRouter=injected('eventRouter');
     const eventStore= injected('eventStore');
+
     const tictactoe = Tictactoe(inject({
         TictactoeState:TictactoeState(inject({}))
     }));
@@ -16,7 +18,10 @@ module.exports=function(injected) {
         commandRouter,
         eventRouter,
         eventStore,
-        aggregate:tictactoe
+        aggregate:tictactoe,
+        Cache: CacheModule(inject(
+            {cacheSize:100}
+        ))
     }));
 
     return {
