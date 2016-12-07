@@ -7,12 +7,9 @@ module.exports = function (injected) {
         var gamefull=false;
 
         function processEvent(event) {
-//            console.debug("Event received:", event);
-            if(event.type==="JoinGame") {
+            if(event.type==="GameJoined") {
                 gamefull=true;
-//                console.debug("Game is now full");
             }
-//            console.debug("event", event);
         }
 
         function processEvents(history) {
