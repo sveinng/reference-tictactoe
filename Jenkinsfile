@@ -44,7 +44,37 @@ node {
     } finally {
 
         notifyBuild(currentBuild.result)
-        xunit 'reports/**'
+//        junit 'reports/**'
+                    step([
+                            $class        : 'XUnitBuilder',
+                            testTimeMargin: '3000',
+                            thresholdMode : 1,
+                            thresholds    : [
+                                    [
+                                            $class              : 'FailedThreshold',
+                                            failureNewThreshold : '',
+                                            failureThreshold    : '',
+                                            unstableNewThreshold: '',
+                                            unstableThreshold   : '0'
+                                    ], [
+                                            $class              : 'SkippedThreshold',
+                                            failureNewThreshold : '',
+                                            failureThreshold    : '',
+                                            unstableNewThreshold: '',
+                                            unstableThreshold   : '0']
+                            ],
+                            tools         : [
+                                    [
+                                            $class               : 'JUnitType',
+                                            deleteOutputFiles    : true,
+                                            failIfNotNew         : true,
+                                            pattern              : 'reports/*.xml',
+                                            skipNoTestFiles      : true,
+                                            stopProcessingIfError: false
+                                    ]
+                            ]
+                    ])
+
 
     }
 }
