@@ -26,7 +26,8 @@ node {
        stage 'Deploy'
 
             echo 'Delploy to AWS'
-            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0'
+// Disable aws provisioning for now
+//            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0'
 
        stage 'Cleanup'
 
