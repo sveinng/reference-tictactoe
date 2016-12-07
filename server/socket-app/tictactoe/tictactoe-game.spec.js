@@ -7,22 +7,46 @@ var tictactoe = require('./tictactoe-handler')(inject({
     TictactoeState
 }));
 
-var createEvent = {
-    type: "GameCreated",
-    user: {
-        userName: "TheGuy"
-    },
-    name: "TheFirstGame",
-    timeStamp: "2014-12-02T11:29:29"
+var eventCreateGame = {
+    id:"123987",
+    type: "CreateGame",
+    user: { userName: "Uber" },
+    name: "UberGame",
+    timeStamp: "2016-12-07T20:55:29"
 };
 
-var joinEvent = {
+var eventGameCreated = {
+    type: "GameCreated",
+    user: { userName: "Uber" },
+    name: "UberGame",
+    timeStamp: "2016-12-07T20:55:29",
+    side:'X'
+};
+
+var eventJoinGame = {
+  type: "JoinGame",
+  user: {
+      userName: "Gummi"
+  },
+  name: "UberGame",
+  timeStamp: "2016-12-07T20:55:40"
+};
+
+var eventJoinGameThirdPlayer = {
+  type: "JoinGame",
+  user: {
+      userName: "Third Player"
+  },
+  name: "UberGame",
+  timeStamp: "2016-12-07T20:56:29"
+};
+
+var eventGameJoined = {
     type: "GameJoined",
-    user: {
-        userName: "Gummi"
-    },
-    name: "TheFirstGame",
-    timeStamp: "2014-12-02T11:29:29"
+    user: { userName: "Svenson" },
+    name: "UberGame",
+    timeStamp: "2016-12-07T20:55:40",
+    side:'O'
 };
 
 
@@ -45,30 +69,9 @@ describe('create game command', function() {
 
 
     it('should emit game created event', function(){
-
         given = [];
-        when =
-        {
-            id:"123987",
-            type: "CreateGame",
-            user: {
-                userName: "TheGuy"
-            },
-            name: "TheFirstGame",
-            timeStamp: "2014-12-02T11:29:29"
-        };
-        then = [
-            {
-                type: "GameCreated",
-                user: {
-                    userName: "TheGuy"
-                },
-                name: "TheFirstGame",
-                timeStamp: "2014-12-02T11:29:29",
-                side:'X'
-            }
-        ];
-
+        when = eventCreateGame;
+        then = [ eventGameCreated ];
     })
 });
 
