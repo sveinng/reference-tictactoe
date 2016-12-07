@@ -25,4 +25,3 @@ node_modules/.bin/db-migrate --config ./server/database.json --migrations-dir ./
 nodemon run.js
 
 exit 0
-
