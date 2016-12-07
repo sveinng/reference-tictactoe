@@ -4,3 +4,8 @@
 /build
 /.idea/
 todo.md
+/compose
+/reports
+*.log
+yarn*gz
+.yarn*

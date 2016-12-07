@@ -1,4 +1,5 @@
 require('./globals');
+require('jasmine-reporters');
 
 
 var JasmineConsoleReporter = require('jasmine-console-reporter');
@@ -10,3 +11,12 @@ var consoleReporter = new JasmineConsoleReporter({
     activity: false
 });
 jasmine.getEnv().addReporter(consoleReporter);
+
+
+var reporters = require('jasmine-reporters');
+var junitReporter = new reporters.JUnitXmlReporter({
+    savePath: 'reports/',
+    consolidateAll: false
+});
+jasmine.getEnv().addReporter(junitReporter);
+
