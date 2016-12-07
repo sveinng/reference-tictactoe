@@ -48,9 +48,8 @@ node {
 }
 
 
-def setBuildStatus(message,state){
+def setBuildStatus(String message, String state){
   // build status of null means successful
-  buildStatus =  buildStatus ?: 'SUCCESSFUL'
 
   step([
       $class: "GitHubCommitStatusSetter",
