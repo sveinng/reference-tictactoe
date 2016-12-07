@@ -44,7 +44,7 @@ node {
     } finally {
 
         notifyBuild(currentBuild.result)
-        junit 'reports/**'
+        xunit 'reports/**'
 
     }
 }
