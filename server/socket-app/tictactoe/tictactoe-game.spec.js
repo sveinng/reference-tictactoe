@@ -8,7 +8,7 @@ var tictactoe = require('./tictactoe-handler')(inject({
 }));
 
 var eventCreateGame = {
-    id:"123987",
+    gameId:"1337",
     type: "CreateGame",
     user: { userName: "Uber" },
     name: "UberGame",
@@ -16,6 +16,7 @@ var eventCreateGame = {
 };
 
 var eventGameCreated = {
+    gameId: "1337",
     type: "GameCreated",
     user: { userName: "Uber" },
     name: "UberGame",
@@ -24,15 +25,15 @@ var eventGameCreated = {
 };
 
 var eventJoinGame = {
-  type: "JoinGame",
-  user: {
-      userName: "Svenson"
-  },
-  name: "UberGame",
-  timeStamp: "2016-12-07T20:55:40"
+    gameId:"1337",
+    type: "JoinGame",
+    user: { userName: "Svenson" },
+    name: "UberGame",
+    timeStamp: "2016-12-07T20:55:40"
 };
 
 var eventGameJoined = {
+    gameId:"1337",
     type: "GameJoined",
     user: { userName: "Svenson" },
     name: "UberGame",
@@ -41,6 +42,7 @@ var eventGameJoined = {
 };
 
 var eventJoinGameThirdPlayer = {
+  gameId:"1337",
   type: "JoinGame",
   user: { userName: "Third Player" },
   name: "UberGame",
@@ -48,6 +50,7 @@ var eventJoinGameThirdPlayer = {
 };
 
 var eventFullGameJoinAttempted = {
+  gameId:"1337",
   type: "FullGameJoinAttempted",
   user: { userName: "Third Player" },
   name: "UberGame",
