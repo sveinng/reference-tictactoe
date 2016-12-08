@@ -19,8 +19,8 @@ node {
             sh 'npm test'
 
        stage 'Build Docker'
-
             sh './scripts/build.sh'
+            sh './scripts/delete-all-dockers.sh'
             sh './scripts/build-docker.sh'
 
        stage 'Deploy'
