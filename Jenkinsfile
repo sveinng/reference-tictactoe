@@ -4,45 +4,54 @@
 node {
 
     try {
-
-       stage 'Checkout'
+       // Check out source from Github
+       stage('Checkout') {
             notifyBuild('STARTED')
             checkout scm
+       }
 
-       stage 'Test'
-
+       // Prepare build environment and run unit tests
+       stage('Test') {
             env.NODE_ENV = "test"
-            print "Environment will be : ${env.NODE_ENV}"
-
+            print "Testing environment will be : ${env.NODE_ENV}"
             sh 'node -v'
+            sh 'npm -v'
             sh 'scripts/install-node-modules.sh'
             sh 'npm test'
+       }
 
-       stage 'Build Docker'
+       // Build Docker images from scratch and push to Docker hub
+       stage('Build Docker') {
             sh './scripts/build.sh'
             sh './scripts/delete-all-dockers.sh'
             sh './scripts/build-docker.sh'
+       }
 
-       stage 'Deploy'
-
+       // Deploy Docker image to AWS for testing
+       stage('Deploy') {
             echo 'Delploy to AWS'
-// Disable aws provisioning for now
-//            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0'
+            // Disable aws provisioning for now
+            // sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0'
+       }
 
-       stage 'Cleanup'
-
+       // Clean our building environment
+       // This saves a little time opposed to delete everything
+       stage('Cleanup') {
             echo 'prune and cleanup'
             sh 'npm prune'
-            sh 'rm node_modules -rf'
+            sh 'rm -rf node_modules'
             setBuildStatus("Build complete", "SUCCESS")
+       }
 
     } catch (err) {
 
+        // Catch any error
         currentBuild.result = "FAILURE"
         throw err
 
     } finally {
 
+        // No matter what - notify on failure and provide data from unit and code coverage test
         notifyBuild(currentBuild.result)
         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'coverage/', reportFiles: 'index.html', reportName: 'Code Coverage Report'])
 
@@ -79,6 +88,7 @@ node {
 }
 
 
+// Set build status on each commit on Github - nice yeah!
 def setBuildStatus(String message, String state){
   // build status of null means successful
 
@@ -91,6 +101,7 @@ def setBuildStatus(String message, String state){
   ])
 }
 
+// Notify via Slacker on every build activity
 def notifyBuild(String buildStatus = 'STARTED') {
   // build status of null means successful
   buildStatus =  buildStatus ?: 'SUCCESSFUL'
