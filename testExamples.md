@@ -24,7 +24,7 @@ Then[GameLeft]
 ### Place move
 Given[GameCreated],
 When[PlaceMove(0,0,X)],
-Then[MovePlaced]
+Then[MoveMade]
 
 ### Place illegal move
 Given[GameCreated,PlaceMove(0,0,X)],

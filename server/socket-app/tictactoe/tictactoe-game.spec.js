@@ -108,3 +108,48 @@ describe('join game command', function () {
       then = [ eventFullGameJoinAttempted ];
     });
 });
+
+
+describe('place move command', function () {
+
+    var given, when, then;
+    beforeEach(function () {
+        given = undefined;
+        when = undefined;
+        then = undefined;
+    });
+
+    afterEach(function () {
+        tictactoe(given).executeCommand(when, function (actualEvents) {
+            should(JSON.stringify(actualEvents)).be.exactly(JSON.stringify(then));
+        });
+    });
+
+    it('should emit MoveMade event', function () {
+        given = [ eventGameCreated, eventJoinGame, eventGameJoined ];
+        when = {
+            gameId:"1337",
+            type: "PlaceMove",
+            user: { userName: "Uber" },
+            name: "UberGame",
+            timeStamp: "2016-12-07T20:56:29",
+            side: "x",
+            cell: { x:0, y:0}
+        };
+        then = [{
+            "gameId": "1337",
+            "type": "MoveMade",
+            "user": {
+              "userName": "Uber"
+            },
+            "name": "UberGame",
+            "timeStamp": "2016-12-07T20:56:29",
+            "side": "x",
+            "cell": {
+              "x": 0,
+              "y": 0
+            }
+        }];
+    });
+
+});
