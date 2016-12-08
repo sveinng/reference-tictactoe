@@ -44,38 +44,37 @@ node {
     } finally {
 
         notifyBuild(currentBuild.result)
-//        junit 'reports/**'
-                    step([
-                            $class        : 'XUnitBuilder',
-                            testTimeMargin: '3000',
-                            thresholdMode : 1,
-                            thresholds    : [
-                                    [
-                                            $class              : 'FailedThreshold',
-                                            failureNewThreshold : '',
-                                            failureThreshold    : '',
-                                            unstableNewThreshold: '',
-                                            unstableThreshold   : '0'
-                                    ], [
-                                            $class              : 'SkippedThreshold',
-                                            failureNewThreshold : '',
-                                            failureThreshold    : '',
-                                            unstableNewThreshold: '',
-                                            unstableThreshold   : '0']
-                            ],
-                            tools         : [
-                                    [
-                                            $class               : 'JUnitType',
-                                            deleteOutputFiles    : true,
-                                            failIfNotNew         : true,
-                                            pattern              : 'reports/*.xml',
-                                            skipNoTestFiles      : true,
-                                            stopProcessingIfError: false
-                                    ]
-                            ]
-                    ])
+        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'coverage/', reportFiles: 'index.html', reportName: 'Code Coverage Report'])
 
-
+        step([
+            $class        : 'XUnitBuilder',
+            testTimeMargin: '3000',
+            thresholdMode : 1,
+            thresholds    : [
+                [
+                    $class              : 'FailedThreshold',
+                    failureNewThreshold : '',
+                    failureThreshold    : '',
+                    unstableNewThreshold: '',
+                    unstableThreshold   : '0'
+                ], [
+                    $class              : 'SkippedThreshold',
+                    failureNewThreshold : '',
+                    failureThreshold    : '',
+                    unstableNewThreshold: '',
+                    unstableThreshold   : '0']
+            ],
+            tools         : [
+                [
+                    $class               : 'JUnitType',
+                    deleteOutputFiles    : true,
+                    failIfNotNew         : true,
+                    pattern              : 'reports/*.xml',
+                    skipNoTestFiles      : true,
+                    stopProcessingIfError: false
+                ]
+            ]
+        ])
     }
 }
 

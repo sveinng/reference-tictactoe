@@ -6,6 +6,7 @@
 todo.md
 /compose
 /reports
+/coverage
 *.log
 yarn*gz
 .yarn*
