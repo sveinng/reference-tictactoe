@@ -28,8 +28,13 @@ Then[MoveMade]
 
 ### Place illegal move
 Given[GameCreated,PlaceMove(0,0,X)],
-When[PlaceMove(0,0,X)],
+When[PlaceMove(0,0,O)],
 Then[MoveIllegal]
+
+### Make move out of turn
+Given[GameCreated,PlaceMove(0,0,X)],
+When[PlaceMove(0,0,X)],
+Then[NotYourMove]
 
 ### Place winning move (1 / 3)
 Given[GameCreated,PlaceMove(0,0,X),PlaceMove(1,0,X)],

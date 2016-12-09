@@ -4,6 +4,7 @@ module.exports = function (injected) {
 
     return function (history) {
 
+        var lastturn = "";
         var gamefull=false;
         var board = [
           [0,0,0],
@@ -18,6 +19,7 @@ module.exports = function (injected) {
             if(event.type==="PlaceMove") {
                 if ((board)[event.coordinates.y][event.coordinates.x] == "0") {
                     (board)[event.coordinates.y][event.coordinates.x] = event.side;
+                    lastturn = event.side;
                 }
             }
         }
@@ -30,6 +32,10 @@ module.exports = function (injected) {
             return gamefull;
         }
 
+        function isTurn(side) {
+            return side != lastturn;
+        }
+
         function cellEmpty(event) {
             return board[event.coordinates.y][event.coordinates.x] == "0";
         }
@@ -38,6 +44,7 @@ module.exports = function (injected) {
 
         return {
             gameFull: gameFull,
+            isTurn: isTurn,
             cellEmpty: cellEmpty,
             processEvents: processEvents
         }

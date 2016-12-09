@@ -42,15 +42,23 @@ module.exports = function(injected){
                         }]);
                     },
                     "PlaceMove": function(cmd){
+                        if(!gameState.isTurn(cmd.side)){
+                            eventHandler( [{
+                                gameId: cmd.gameId,
+                                type: "NotYourMove",
+                                user: cmd.user,
+                                name: cmd.name,
+                                timeStamp: cmd.timeStamp
+                            }]);
+                            return;
+                        }
                         if(!gameState.cellEmpty(cmd)){
                             eventHandler( [{
                                 gameId: cmd.gameId,
                                 type: "MoveIllegal",
                                 user: cmd.user,
                                 name: cmd.name,
-                                timeStamp: cmd.timeStamp,
-                                side: cmd.side,
-                                coordinates: cmd.coordinates
+                                timeStamp: cmd.timeStamp
                             }]);
                             return;
                         }
