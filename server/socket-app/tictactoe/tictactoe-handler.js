@@ -87,6 +87,15 @@ module.exports = function(injected){
                                 side: cmd.side
                             });
                         }
+                        else if (gameState.gameDraw()){
+                            events.push({
+                                gameId: cmd.gameId,
+                                type: "GameDraw",
+                                user: cmd.user,
+                                name: cmd.name,
+                                timeStamp: cmd.timeStamp
+                            });
+                        }
 
                         eventHandler(events);
 

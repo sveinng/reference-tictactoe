@@ -52,6 +52,10 @@ module.exports = function (injected) {
             return false;
         }
 
+        function gameDraw() {
+            return turns >= 9;
+        }
+
         processEvents(history);
 
         return {
@@ -59,6 +63,7 @@ module.exports = function (injected) {
             isNotTurn: isNotTurn,
             cellEmpty: cellEmpty,
             gameWon: gameWon,
+            gameDraw: gameDraw,
             processEvents: processEvents
         }
     };

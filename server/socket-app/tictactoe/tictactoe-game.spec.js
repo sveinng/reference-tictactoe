@@ -514,4 +514,166 @@ describe('place move command', function () {
             } ];
     });
 
+
+    it('should emit GameWon on winning the game (top left 2 bottom right)', function () {
+        given = [ eventGameCreated, eventJoinGame,
+            {
+                "gameId": "1337",
+                "type": "MoveMade",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X",
+                "coordinates": { "x": 0, "y": 0 }
+            },
+            {
+                "gameId":"1337",
+                "type": "MoveMade",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X",
+                "coordinates": { "x": 1, "y": 1 }
+            },
+            {
+                "gameId":"1337",
+                "type": "MoveMade",
+                "user": { "userName": "Svenson" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "O",
+                "coordinates": { "x": 1, "y": 2 }
+            }
+         ];
+        when = {
+            "gameId":"1337",
+            "type": "PlaceMove",
+            "user": { "userName": "Uber" },
+            "name": "UberGame",
+            "timeStamp": "2016-12-07T20:56:29",
+            "side": "X",
+            "coordinates": { "x": 2, "y": 2 }
+        };
+        then = [
+            {
+                "gameId": "1337",
+                "type": "MoveMade",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X",
+                "coordinates": { "x": 2, "y": 2 }
+            },
+            {
+                "gameId": "1337",
+                "type": "GameWon",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X"
+            } ];
+    });
+
+    it('should emit GameDraw after 9 plays without winner', function () {
+        given = [ eventGameCreated, eventJoinGame,
+            {
+                "gameId": "1337",
+                "type": "MoveMade",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X",
+                "coordinates": { "x": 0, "y": 0 }
+            },
+            {
+                "gameId":"1337",
+                "type": "MoveMade",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X",
+                "coordinates": { "x": 0, "y": 1 }
+            },
+            {
+                "gameId":"1337",
+                "type": "MoveMade",
+                "user": { "userName": "Svenson" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "O",
+                "coordinates": { "x": 0, "y": 2 }
+            },
+            {
+                "gameId": "1337",
+                "type": "MoveMade",
+                "user": { "userName": "Svenson" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "O",
+                "coordinates": { "x": 1, "y": 0 }
+            },
+            {
+                "gameId":"1337",
+                "type": "MoveMade",
+                "user": { "userName": "Svenson" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "O",
+                "coordinates": { "x": 1, "y": 1 }
+            },
+            {
+                "gameId":"1337",
+                "type": "MoveMade",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X",
+                "coordinates": { "x": 1, "y": 2 }
+            },
+            {
+                "gameId": "1337",
+                "type": "MoveMade",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X",
+                "coordinates": { "x": 2, "y": 0 }
+            },
+            {
+                "gameId":"1337",
+                "type": "MoveMade",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X",
+                "coordinates": { "x": 2, "y": 1 }
+            } ];
+        when = {
+            "gameId":"1337",
+            "type": "PlaceMove",
+            "user": { "userName": "Svenson" },
+            "name": "UberGame",
+            "timeStamp": "2016-12-07T20:56:29",
+            "side": "O",
+            "coordinates": { "x": 2, "y": 2 }
+        };
+        then = [
+            {
+                "gameId": "1337",
+                "type": "MoveMade",
+                "user": { "userName": "Svenson" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "O",
+                "coordinates": { "x": 2, "y": 2 }
+            },
+            {
+                "gameId": "1337",
+                "type": "GameDraw",
+                "user": { "userName": "Svenson" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29"
+            } ];
+    });
+
 });
