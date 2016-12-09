@@ -16,7 +16,7 @@ module.exports = function (injected) {
                 gamefull=true;
             }
             if(event.type==="PlaceMove") {
-                if ((board)[event.coordinates.y][event.coordinates.x] === "0") {
+                if ((board)[event.coordinates.y][event.coordinates.x] == "0") {
                     (board)[event.coordinates.y][event.coordinates.x] = event.side;
                 }
             }

@@ -150,4 +150,18 @@ describe('place move command', function () {
         then = [ eventMoveMade ];
     });
 
+    it('should emit IllegalMove event', function () {
+        given = [ eventGameCreated, eventJoinGame, eventGameJoined, eventPlaceMove, eventMoveMade ];
+        when = eventPlaceMove;
+        then = [ {
+            gameId: "1337",
+            type: "MoveIllegal",
+            user: { "userName": "Uber" },
+            name: "UberGame",
+            timeStamp: "2016-12-07T20:56:29",
+            side: "x",
+            coordinates: { "x": 0, "y": 0 }
+        } ];
+    });
+
 });
