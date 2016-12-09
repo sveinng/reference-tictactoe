@@ -15,7 +15,6 @@ ADD .yarn-cache.tgz /
 
 # Install packages using Yarn
 RUN cd /tmp && yarn install
-RUN yarn global add nodemon
 RUN mkdir -p /opt/app && cd /opt/app && ln -s /tmp/node_modules && ln -s /tmp/package.json
 
 # Install build artifacts and run application

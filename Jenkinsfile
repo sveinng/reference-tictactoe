@@ -30,8 +30,7 @@ node {
        // Deploy Docker image to AWS for testing
        stage('Deploy') {
             echo 'Delploy to AWS'
-            // Disable aws provisioning for now
-            // sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0'
+            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0'
        }
 
        // Clean our building environment

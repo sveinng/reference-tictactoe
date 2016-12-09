@@ -22,6 +22,5 @@ sleep 5
 node_modules/.bin/db-migrate --config ./server/database.json --migrations-dir ./server/migrations up -e production
 
 # Start the server with nodemon
-nodemon run.js
+node run.js
 
-exit 0
