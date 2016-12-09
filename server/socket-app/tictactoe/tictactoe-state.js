@@ -32,8 +32,8 @@ module.exports = function (injected) {
             return gamefull;
         }
 
-        function isTurn(side) {
-            return side != lastturn;
+        function isNotTurn(side) {
+            return side == lastturn;
         }
 
         function cellEmpty(event) {
@@ -44,7 +44,7 @@ module.exports = function (injected) {
 
         return {
             gameFull: gameFull,
-            isTurn: isTurn,
+            isNotTurn: isNotTurn,
             cellEmpty: cellEmpty,
             processEvents: processEvents
         }

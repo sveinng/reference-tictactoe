@@ -42,7 +42,7 @@ module.exports = function(injected){
                         }]);
                     },
                     "PlaceMove": function(cmd){
-                        if(!gameState.isTurn(cmd.side)){
+                        if(gameState.isNotTurn(cmd.side)){
                             eventHandler( [{
                                 gameId: cmd.gameId,
                                 type: "NotYourMove",

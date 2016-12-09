@@ -113,7 +113,7 @@ var eventMoveIllegalX = {
     "user": { "userName": "Uber" },
     "name": "UberGame",
     "timeStamp": "2016-12-07T20:56:29",
-}
+};
 
 var eventMoveIllegalO = {
     "gameId": "1337",
@@ -121,7 +121,15 @@ var eventMoveIllegalO = {
     "user": { "userName": "Svenson" },
     "name": "UberGame",
     "timeStamp": "2016-12-07T20:56:29"
-}
+};
+
+var eventNotYourMoveX = {
+    "gameId": "1337",
+    "type": "NotYourMove",
+    "user": { "userName": "Uber" },
+    "name": "UberGame",
+    "timeStamp": "2016-12-07T20:56:29"
+};
 
 describe('create game command', function() {
 
@@ -205,13 +213,7 @@ describe('place move command', function () {
     it('should emit NotYourMove if attempting to make move out of turn', function () {
         given = [ eventGameCreated, eventJoinGame, eventGameJoined, eventPlaceMoveX, eventMoveMadeX ];
         when = eventPlaceMoveX1;
-        then = [ {
-            "gameId": "1337",
-            "type": "NotYourMove",
-            "user": { "userName": "Uber" },
-            "name": "UberGame",
-            "timeStamp": "2016-12-07T20:56:29"
-        } ];
+        then = [ eventNotYourMoveX ];
     });
 
 });
