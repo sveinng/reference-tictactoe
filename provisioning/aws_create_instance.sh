@@ -49,12 +49,18 @@ SEC_GRP_ID="sg-81d35ee7"
 # User data - file containing the boostrap scripts injected to newly created image
 USER_DATA="file://aws_bootstrap.sh"
 
-# Allocation ID - id of Elastic IP - eipalloc-a5ffd0c1 has the public IP : 52.209.246.223
-ALLOCATION_ID="eipalloc-a5ffd0c1"
+# Allocation ID - id of Elastic IP -
+# PROD eipalloc-a5ffd0c1 has the public IP : 52.209.246.223
+# TEST eipalloc-cc4963a8 has the public IP : 52.19.160.110
+PROD_ALLOCATION_ID="eipalloc-a5ffd0c1"
+TEST_ALLOCATION_ID="eipalloc-cc4963a8"
 
 # AWS tags for new instance - type:ttt-server & role:production are the current tags
 AWS_TAG1="Key=type,Value=ttt-server"
-AWS_TAG2="Key=role,Value=production"
+PROD_AWS_TAG="Key=role,Value=prod"
+PROD_AWS_NAME="Key=Name,Value=TicTacToe_PROD"
+TEST_AWS_TAG="Key=role,Value=test"
+TEST_AWS_NAME="Key=Name,Value=TicTacToe_TEST"
 
 # Max wait time for instance to become running in seconds (not counting aws cli runtime)
 MAX_WAIT=60
@@ -63,8 +69,8 @@ MAX_WAIT=60
 ###############################################################################################
 # CLI part
 
-if [[ ! $# -eq 2 ]] ; then
-  printf "\n\t usage $0 <git revision> <aws image id>"
+if [[ ! $# -eq 3 ]] ; then
+  printf "\n\t usage $0 <git revision> <aws image id> <test|production>"
   printf "\n\t git revision: use full git revision string or latest for latest git revision"
   printf "\n\t aws image id: available images are"
   printf "\n\t\t ami-0d77397e -> Ubuntu Server 16.04 LTS (HVM), SSD Volume Type"
@@ -75,12 +81,28 @@ fi
 
 GIT_REV=$1
 IMAGE_ID=$2
+OP_MODE=$3
 
 
 ###############################################################################################
 # Validate input
 
-log "Creating $COUNT x $INSTANCE_TYPE instance from $IMAGE_ID running sveinn/tictactoe:$GIT_REV"
+if [ $OP_MODE == "test" ] ; then
+    ALLOCATION_ID=$TEST_ALLOCATION_ID
+    AWS_TAG2=$TEST_AWS_TAG
+    AWS_NAME=$TEST_AWS_NAME
+elif [ $OP_MODE = "production" ] ; then
+    ALLOCATION_ID=$PROD_ALLOCATION_ID
+    AWS_TAG2=$PROD_TAG_TEST
+    AWS_NAME=$PROD_AWS_NAME
+else
+    echo "Unknown operation mode!"
+    echo "Valid modes are: production / test"
+    abort
+fi
+
+
+log "Creating $COUNT x $INSTANCE_TYPE $OP_MODE instance from $IMAGE_ID running sveinn/tictactoe:$GIT_REV"
 
 # Check if GIT tag really exists in git
 if [ $GIT_REV = "latest" ] ; then
@@ -120,6 +142,7 @@ fi
 
 # Create bootstrap script for give image
 sed s/GIT_COMMIT_PLACEHOLDER/$GIT_REV/g template/aws_bootstrap.$IMAGE_ID > aws_bootstrap.sh
+sed -i '' s/production/$OP_MODE/g aws_bootstrap.sh
 
 # Create ec2 instance and collect results
 RES=$(aws ec2 run-instances --image-id $IMAGE_ID --count $COUNT --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --subnet-id $SUBNET_ID --security-group-ids $SEC_GRP_ID --user-data $USER_DATA)
@@ -166,7 +189,7 @@ fi
 
 
 # Tag newly created intance
-RES=$(aws ec2 create-tags --resources $RESULT_INSTANCE_ID --tags $AWS_TAG1 $AWS_TAG2)
+RES=$(aws ec2 create-tags --resources $RESULT_INSTANCE_ID --tags $AWS_TAG1 $AWS_TAG2 $AWS_NAME)
 if [[ $? -ne 0 ]] ; then
   log "ERR  Something went wrong ... could not tag newly created instance"
   log "ERR  $RES"
