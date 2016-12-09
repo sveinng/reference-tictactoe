@@ -83,7 +83,8 @@ module.exports = function(injected){
                                 type: "GameWon",
                                 user: cmd.user,
                                 name: cmd.name,
-                                timeStamp: cmd.timeStamp
+                                timeStamp: cmd.timeStamp,
+                                side: cmd.side
                             });
                         }
 
