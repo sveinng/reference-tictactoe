@@ -19,7 +19,6 @@ module.exports = function(injected){
                             timeStamp: cmd.timeStamp,
                             side:'X'
                         }]);
-
                     },
 
                     "JoinGame": function (cmd) {
@@ -93,12 +92,12 @@ module.exports = function(injected){
                                 type: "GameDraw",
                                 user: cmd.user,
                                 name: cmd.name,
-                                timeStamp: cmd.timeStamp
+                                timeStamp: cmd.timeStamp,
+                                side: cmd.side
                             });
                         }
 
                         eventHandler(events);
-
                     }
                 };
 

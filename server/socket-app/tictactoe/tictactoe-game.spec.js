@@ -672,7 +672,8 @@ describe('place move command', function () {
                 "type": "GameDraw",
                 "user": { "userName": "Svenson" },
                 "name": "UberGame",
-                "timeStamp": "2016-12-07T20:56:29"
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "O"
             } ];
     });
 
