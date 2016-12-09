@@ -61,11 +61,6 @@ module.exports = function(injected){
                             side: cmd.side,
                             cell: cmd.cell
                         }]);
-
-//                        gameState.processEvents(events);
-
-                        // Check here for conditions which may warrant additional events to be emitted.
-//                        eventHandler(events);
                     }
                 };
 

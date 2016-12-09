@@ -42,21 +42,40 @@ var eventGameJoined = {
 };
 
 var eventJoinGameThirdPlayer = {
-  gameId:"1337",
-  type: "JoinGame",
-  user: { userName: "Third Player" },
-  name: "UberGame",
-  timeStamp: "2016-12-07T20:56:29"
+    gameId:"1337",
+    type: "JoinGame",
+    user: { userName: "Third Player" },
+    name: "UberGame",
+    timeStamp: "2016-12-07T20:56:29"
 };
 
 var eventFullGameJoinAttempted = {
-  gameId:"1337",
-  type: "FullGameJoinAttempted",
-  user: { userName: "Third Player" },
-  name: "UberGame",
-  timeStamp: "2016-12-07T20:56:29"
+    gameId:"1337",
+    type: "FullGameJoinAttempted",
+    user: { userName: "Third Player" },
+    name: "UberGame",
+    timeStamp: "2016-12-07T20:56:29"
 };
 
+var eventPlaceMove = {
+    gameId:"1337",
+    type: "PlaceMove",
+    user: { userName: "Uber" },
+    name: "UberGame",
+    timeStamp: "2016-12-07T20:56:29",
+    side: "x",
+    cell: { "x": 0, "y": 0 }
+}
+
+var eventMoveMade = {
+    "gameId": "1337",
+    "type": "MoveMade",
+    "user": { "userName": "Uber" },
+    "name": "UberGame",
+    "timeStamp": "2016-12-07T20:56:29",
+    "side": "x",
+    "cell": { "x": 0, "y": 0 }
+}
 
 describe('create game command', function() {
 
@@ -127,29 +146,8 @@ describe('place move command', function () {
 
     it('should emit MoveMade event', function () {
         given = [ eventGameCreated, eventJoinGame, eventGameJoined ];
-        when = {
-            gameId:"1337",
-            type: "PlaceMove",
-            user: { userName: "Uber" },
-            name: "UberGame",
-            timeStamp: "2016-12-07T20:56:29",
-            side: "x",
-            cell: { x:0, y:0}
-        };
-        then = [{
-            "gameId": "1337",
-            "type": "MoveMade",
-            "user": {
-              "userName": "Uber"
-            },
-            "name": "UberGame",
-            "timeStamp": "2016-12-07T20:56:29",
-            "side": "x",
-            "cell": {
-              "x": 0,
-              "y": 0
-            }
-        }];
+        when = eventPlaceMove;
+        then = [ eventMoveMade ];
     });
 
 });
