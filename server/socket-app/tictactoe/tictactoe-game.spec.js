@@ -57,33 +57,63 @@ var eventFullGameJoinAttempted = {
     "timeStamp": "2016-12-07T20:56:29"
 };
 
-var eventPlaceMove = {
+var eventPlaceMoveX = {
     "gameId":"1337",
     "type": "PlaceMove",
     "user": { "userName": "Uber" },
     "name": "UberGame",
     "timeStamp": "2016-12-07T20:56:29",
-    "side": "x",
+    "side": "X",
     "coordinates": { "x": 0, "y": 0 }
 };
 
-var eventMoveMade = {
+var eventPlaceMoveO = {
+    "gameId":"1337",
+    "type": "PlaceMove",
+    "user": { "userName": "Svenson" },
+    "name": "UberGame",
+    "timeStamp": "2016-12-07T20:56:29",
+    "side": "O",
+    "coordinates": { "x": 0, "y": 0 }
+};
+
+var eventMoveMadeX = {
     "gameId": "1337",
     "type": "MoveMade",
     "user": { "userName": "Uber" },
     "name": "UberGame",
     "timeStamp": "2016-12-07T20:56:29",
-    "side": "x",
+    "side": "X",
     "coordinates": { "x": 0, "y": 0 }
 };
 
-var eventMoveIllegal = {
+var eventMoveMadeO = {
+    "gameId": "1337",
+    "type": "MoveMade",
+    "user": { "userName": "Uber" },
+    "name": "UberGame",
+    "timeStamp": "2016-12-07T20:56:29",
+    "side": "O",
+    "coordinates": { "x": 0, "y": 0 }
+};
+
+var eventMoveIllegalX = {
     "gameId": "1337",
     "type": "MoveIllegal",
     "user": { "userName": "Uber" },
     "name": "UberGame",
     "timeStamp": "2016-12-07T20:56:29",
-    "side": "x",
+    "side": "X",
+    "coordinates": { "x": 0, "y": 0 }
+}
+
+var eventMoveIllegalO = {
+    "gameId": "1337",
+    "type": "MoveIllegal",
+    "user": { "userName": "Svenson" },
+    "name": "UberGame",
+    "timeStamp": "2016-12-07T20:56:29",
+    "side": "O",
     "coordinates": { "x": 0, "y": 0 }
 }
 
@@ -154,16 +184,16 @@ describe('place move command', function () {
         });
     });
 
-    it('should emit MoveMade event', function () {
+    it('should emit MoveMade on first game move', function () {
         given = [ eventGameCreated, eventJoinGame, eventGameJoined ];
-        when = eventPlaceMove;
-        then = [ eventMoveMade ];
+        when = eventPlaceMoveX;
+        then = [ eventMoveMadeX ];
     });
 
-    it('should emit IllegalMove event', function () {
-        given = [ eventGameCreated, eventJoinGame, eventGameJoined, eventPlaceMove, eventMoveMade ];
-        when = eventPlaceMove;
-        then = [ eventMoveIllegal ];
+    it('should emit IllegalMove when square is already occupied', function () {
+        given = [ eventGameCreated, eventJoinGame, eventGameJoined, eventPlaceMoveX, eventMoveMadeX ];
+        when = eventPlaceMoveO;
+        then = [ eventMoveIllegalO ];
     });
 
 });
