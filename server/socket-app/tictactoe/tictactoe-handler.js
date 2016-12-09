@@ -48,7 +48,9 @@ module.exports = function(injected){
                                 type: "MoveIllegal",
                                 user: cmd.user,
                                 name: cmd.name,
-                                timeStamp: cmd.timeStamp
+                                timeStamp: cmd.timeStamp,
+                                side: cmd.side,
+                                coordinates: cmd.coordinates
                             }]);
                             return;
                         }
@@ -59,7 +61,7 @@ module.exports = function(injected){
                             name: cmd.name,
                             timeStamp: cmd.timeStamp,
                             side: cmd.side,
-                            cell: cmd.cell
+                            coordinates: cmd.coordinates
                         }]);
                     }
                 };

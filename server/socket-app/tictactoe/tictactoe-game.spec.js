@@ -64,18 +64,18 @@ var eventPlaceMove = {
     name: "UberGame",
     timeStamp: "2016-12-07T20:56:29",
     side: "x",
-    cell: { "x": 0, "y": 0 }
-}
+    coordinates: { "x": 0, "y": 0 }
+};
 
 var eventMoveMade = {
-    "gameId": "1337",
-    "type": "MoveMade",
-    "user": { "userName": "Uber" },
-    "name": "UberGame",
-    "timeStamp": "2016-12-07T20:56:29",
-    "side": "x",
-    "cell": { "x": 0, "y": 0 }
-}
+    gameId: "1337",
+    type: "MoveMade",
+    user: { "userName": "Uber" },
+    name: "UberGame",
+    timeStamp: "2016-12-07T20:56:29",
+    side: "x",
+    coordinates: { "x": 0, "y": 0 }
+};
 
 describe('create game command', function() {
 

@@ -16,8 +16,8 @@ module.exports = function (injected) {
                 gamefull=true;
             }
             if(event.type==="PlaceMove") {
-                if ((board)[event.cell.y][event.cell.x] === "0") {
-                    (board)[event.cell.y][event.cell.x] = event.side;
+                if ((board)[event.coordinates.y][event.coordinates.x] === "0") {
+                    (board)[event.coordinates.y][event.coordinates.x] = event.side;
                 }
             }
         }
@@ -31,7 +31,7 @@ module.exports = function (injected) {
         }
 
         function cellEmpty(event) {
-            return board[event.cell.y][event.cell.x] == "0";
+            return board[event.coordinates.y][event.coordinates.x] == "0";
         }
 
         processEvents(history);
