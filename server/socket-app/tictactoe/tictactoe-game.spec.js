@@ -199,21 +199,64 @@ describe('place move command', function () {
     });
 
     it('should emit MoveMade on first game move', function () {
-        given = [ eventGameCreated, eventJoinGame, eventGameJoined ];
+        given = [ eventGameCreated, eventJoinGame ];
         when = eventPlaceMoveX;
         then = [ eventMoveMadeX ];
     });
 
     it('should emit IllegalMove when square is already occupied', function () {
-        given = [ eventGameCreated, eventJoinGame, eventGameJoined, eventPlaceMoveX, eventMoveMadeX ];
+        given = [ eventGameCreated, eventJoinGame, eventMoveMadeX, ];
         when = eventPlaceMoveO;
         then = [ eventMoveIllegalO ];
     });
 
     it('should emit NotYourMove if attempting to make move out of turn', function () {
-        given = [ eventGameCreated, eventJoinGame, eventGameJoined, eventPlaceMoveX, eventMoveMadeX ];
+        given = [ eventGameCreated, eventJoinGame, eventMoveMadeX ];
         when = eventPlaceMoveX1;
         then = [ eventNotYourMoveX ];
+    });
+
+    it('should emit GameWon on winning the game', function () {
+        given = [ eventGameCreated, eventJoinGame, eventMoveMadeX,
+            {
+                "gameId":"1337",
+                "type": "MoveMade",
+                "user": { "userName": "Svenson" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "O",
+                "coordinates": { "x": 0, "y": 2 }
+            },
+            {
+                "gameId":"1337",
+                "type": "MoveMade",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X",
+                "coordinates": { "x": 1, "y": 0 }
+            },
+            {
+                "gameId":"1337",
+                "type": "MoveMade",
+                "user": { "userName": "Svenson" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "O",
+                "coordinates": { "x": 1, "y": 2 }
+            }
+         ];
+        when = {
+            "gameId":"1337",
+            "type": "PlaceMove",
+            "user": { "userName": "Uber" },
+            "name": "UberGame",
+            "timeStamp": "2016-12-07T20:56:29",
+            "side": "X",
+            "coordinates": { "x": 2, "y": 0 }
+        };
+        then = [ {"gameId":"1337","type":"MoveMade","user":{"userName":"Uber"},"name":"UberGame","timeStamp":"2016-12-07T20:56:29","side":"X","coordinates":{"x":2,"y":0}},
+                 {"gameId":"1337","type":"GameWon","user":{"userName":"Uber"},"name":"UberGame","timeStamp":"2016-12-07T20:56:29"} ];
     });
 
 });

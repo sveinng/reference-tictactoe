@@ -4,7 +4,8 @@ module.exports = function (injected) {
 
     return function (history) {
 
-        var lastturn = "";
+        var turns = 0;
+        var lastturn = "none";
         var gamefull=false;
         var board = [
           [0,0,0],
@@ -16,10 +17,11 @@ module.exports = function (injected) {
             if(event.type==="GameJoined") {
                 gamefull=true;
             }
-            if(event.type==="PlaceMove") {
-                if ((board)[event.coordinates.y][event.coordinates.x] == "0") {
+            if(event.type==="MoveMade") {
+                if ((board)[event.coordinates.y][event.coordinates.x] === 0) {
                     (board)[event.coordinates.y][event.coordinates.x] = event.side;
                     lastturn = event.side;
+                    turns++;
                 }
             }
         }
@@ -37,7 +39,17 @@ module.exports = function (injected) {
         }
 
         function cellEmpty(event) {
-            return board[event.coordinates.y][event.coordinates.x] == "0";
+            return board[event.coordinates.y][event.coordinates.x] === 0;
+        }
+
+        function gameWon(side) {
+            for(var i = 0; i < 3; i++){
+                if ((board)[0][i] ===  side && (board)[1][i] ===  side && (board)[2][i] ===  side) return true;
+                if ((board)[i][0] ===  side && (board)[i][1] ===  side && (board)[i][2] ===  side) return true;
+            }
+            if ((board)[2][0] ===  side && (board)[1][1] ===  side && (board)[0][2] ===  side) return true;
+            if ((board)[0][0] ===  side && (board)[1][1] ===  side && (board)[2][2] ===  side) return true;
+            return false;
         }
 
         processEvents(history);
@@ -46,6 +58,7 @@ module.exports = function (injected) {
             gameFull: gameFull,
             isNotTurn: isNotTurn,
             cellEmpty: cellEmpty,
+            gameWon: gameWon,
             processEvents: processEvents
         }
     };

@@ -21,6 +21,7 @@ module.exports = function(injected){
                         }]);
 
                     },
+
                     "JoinGame": function (cmd) {
                         if(gameState.gameFull()){
                             eventHandler( [{
@@ -41,6 +42,7 @@ module.exports = function(injected){
                             side:'O'
                         }]);
                     },
+
                     "PlaceMove": function(cmd){
                         if(gameState.isNotTurn(cmd.side)){
                             eventHandler( [{
@@ -62,7 +64,8 @@ module.exports = function(injected){
                             }]);
                             return;
                         }
-                        eventHandler([{
+
+                        var events = [{
                             gameId: cmd.gameId,
                             type: "MoveMade",
                             user: cmd.user,
@@ -70,7 +73,22 @@ module.exports = function(injected){
                             timeStamp: cmd.timeStamp,
                             side: cmd.side,
                             coordinates: cmd.coordinates
-                        }]);
+                        }];
+
+                        gameState.processEvents(events);
+
+                        if(gameState.gameWon(cmd.side)){
+                            events.push({
+                                gameId: cmd.gameId,
+                                type: "GameWon",
+                                user: cmd.user,
+                                name: cmd.name,
+                                timeStamp: cmd.timeStamp
+                            });
+                        }
+
+                        eventHandler(events);
+
                     }
                 };
 
