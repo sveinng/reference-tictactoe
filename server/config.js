@@ -3,7 +3,12 @@ module.exports = {
         sessionSecret: 'developmentSessionSecret'
     },
 
+    test: {
+        sessionSecret: 'tesingUberSessionSecret'
+    },
+
     production: {
         sessionSecret: 'productionSessionSecret'
     }
+
 };

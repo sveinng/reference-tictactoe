@@ -10,6 +10,17 @@
     "max": 10,
     "idleTimeoutMillis": 30000
   },
+  "test": {
+    "driver": "pg",
+    "user": "postgres",
+    "password": "CVakcK22D4pntv7Y",
+    "host": "pg-prod",
+    "database": "postgres",
+    "schema": "postgres",
+    "port": 5432,
+    "max": 10,
+    "idleTimeoutMillis": 30000
+  },
   "production": {
     "driver": "pg",
     "user": "postgres",
