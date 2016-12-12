@@ -9,8 +9,7 @@ module.exports=function(injected){
     function userAPI(){
         var waitingFor=[];
         var commandId=0;
-        var gameId=0;
-        var side=0;
+        var thisGame = { gameId: generateUUID() };
 
         var routingContext = RoutingContext(inject({
             io,
@@ -29,18 +28,17 @@ module.exports=function(injected){
             },
             createGame:()=>{
                 var cmdId = generateUUID();
-                gameId = generateUUID();
                 var ts = new Date();
-                side = "X";
-                routingContext.commandRouter.routeMessage({commandId:cmdId, type:"CreateGame", gameId:gameId, timeStamp:ts});
+                routingContext.commandRouter.routeMessage({commandId:cmdId, type:"CreateGame", gameId:thisGame.gameId, timeStamp:ts});
                 return me;
             },
             expectGameCreated:()=>{
                 waitingFor.push("expectGameCreated");
                 routingContext.eventRouter.on('GameCreated', function(game){
                     expect(game.gameId).not.toBeUndefined();
-                    if(game.gameId===gameId){
+                    if(game.gameId===thisGame.gameId){
                         waitingFor.pop();
+                        thisGame = game;
                     }
                 });
                 return me;
@@ -48,8 +46,7 @@ module.exports=function(injected){
             joinGame:(id)=>{
                 var cmdId = generateUUID();
                 var ts = new Date();
-                gameId = id;
-                side = "O";
+                thisGame.gameId = id;
                 routingContext.commandRouter.routeMessage({commandId:cmdId, type:"JoinGame", gameId:id, timeStamp:ts});
                 return me;
             },
@@ -57,28 +54,28 @@ module.exports=function(injected){
                 waitingFor.push("expectGameJoined");
                 routingContext.eventRouter.on('GameJoined', function(game){
                     expect(game.gameId).not.toBeUndefined();
-                    if(game.gameId===gameId){
+                    if(game.gameId===thisGame.gameId){
                         waitingFor.pop();
+                        thisGame = game;
                     }
                 });
                 return me;
             },
             getGame:()=>{
-                game = { gameId: gameId };
-                return game;
+                return thisGame;
             },
             placeMove:(x, y)=>{
                 var cmdId = generateUUID();
                 var ts = new Date();
                 var coordinate = { "x": x, "y": y };
-                routingContext.commandRouter.routeMessage({commandId:cmdId, type:"PlaceMove", gameId:gameId, timeStamp:ts, side:side, coordinates:coordinate});
+                routingContext.commandRouter.routeMessage({commandId:cmdId, type:"PlaceMove", gameId:thisGame.gameId, timeStamp:ts, side:thisGame.side, coordinates:coordinate});
                 return me;
             },
             expectMoveMade:()=>{
                 waitingFor.push("expectMoveMade");
                 routingContext.eventRouter.on('MoveMade', function(game){
                     expect(game.gameId).not.toBeUndefined();
-                    if(game.gameId===gameId){
+                    if(game.gameId===thisGame.gameId){
                         waitingFor.pop();
                     }
                 });
@@ -88,7 +85,7 @@ module.exports=function(injected){
                 waitingFor.push("expectGameWon");
                 routingContext.eventRouter.on('GameWon', function(game){
                     expect(game.gameId).not.toBeUndefined();
-                    if(game.gameId===gameId){
+                    if(game.gameId===thisGame.gameId){
                         waitingFor.pop();
                     }
                 });
