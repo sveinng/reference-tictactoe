@@ -9,6 +9,8 @@ module.exports=function(injected){
     function userAPI(){
         var waitingFor=[];
         var commandId=0;
+        var gameId=0;
+        var side=0;
 
         var routingContext = RoutingContext(inject({
             io,
@@ -22,6 +24,73 @@ module.exports=function(injected){
                 routingContext.socket.on('userAcknowledged', function(ackMessage){
                     expect(ackMessage.clientId).not.toBeUndefined();
                     waitingFor.pop();
+                });
+                return me;
+            },
+            createGame:()=>{
+                var cmdId = generateUUID();
+                gameId = generateUUID();
+                var ts = new Date();
+                side = "X";
+                routingContext.commandRouter.routeMessage({commandId:cmdId, type:"CreateGame", gameId:gameId, timeStamp:ts});
+                return me;
+            },
+            expectGameCreated:()=>{
+                waitingFor.push("expectGameCreated");
+                routingContext.eventRouter.on('GameCreated', function(game){
+                    expect(game.gameId).not.toBeUndefined();
+                    if(game.gameId===gameId){
+                        waitingFor.pop();
+                    }
+                });
+                return me;
+            },
+            joinGame:(id)=>{
+                var cmdId = generateUUID();
+                var ts = new Date();
+                gameId = id;
+                side = "O";
+                routingContext.commandRouter.routeMessage({commandId:cmdId, type:"JoinGame", gameId:id, timeStamp:ts});
+                return me;
+            },
+            expectGameJoined:()=>{
+                waitingFor.push("expectGameJoined");
+                routingContext.eventRouter.on('GameJoined', function(game){
+                    expect(game.gameId).not.toBeUndefined();
+                    if(game.gameId===gameId){
+                        waitingFor.pop();
+                    }
+                });
+                return me;
+            },
+            getGame:()=>{
+                game = { gameId: gameId };
+                return game;
+            },
+            placeMove:(x, y)=>{
+                var cmdId = generateUUID();
+                var ts = new Date();
+                var coordinate = { "x": x, "y": y };
+                routingContext.commandRouter.routeMessage({commandId:cmdId, type:"PlaceMove", gameId:gameId, timeStamp:ts, side:side, coordinates:coordinate});
+                return me;
+            },
+            expectMoveMade:()=>{
+                waitingFor.push("expectMoveMade");
+                routingContext.eventRouter.on('MoveMade', function(game){
+                    expect(game.gameId).not.toBeUndefined();
+                    if(game.gameId===gameId){
+                        waitingFor.pop();
+                    }
+                });
+                return me;
+            },
+            expectGameWon:()=>{
+                waitingFor.push("expectGameWon");
+                routingContext.eventRouter.on('GameWon', function(game){
+                    expect(game.gameId).not.toBeUndefined();
+                    if(game.gameId===gameId){
+                        waitingFor.pop();
+                    }
                 });
                 return me;
             },
