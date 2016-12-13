@@ -118,7 +118,7 @@ if [ $OP_MODE == "test" ] ; then
 elif [ $OP_MODE == "prod" ] ; then
     OP_MODE=production
     ALLOCATION_ID=$PROD_ALLOCATION_ID
-    AWS_TAG2=$PROD_TAG_TEST
+    AWS_TAG2=$PROD_AWS_TAG
     AWS_NAME=$PROD_AWS_NAME
     HOST="tictactoe.sveinng.com"
 else
@@ -178,12 +178,11 @@ sed s/OP_MODE/${OP_MODE}/g aws_bootstrap.tmp > aws_bootstrap.sh
 
 
 # Create ec2 instance and collect results
-RES=$(aws ec2 run-instances --image-id $IMAGE_ID --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --subnet-id $SUBNET_ID --security-group-ids $SEC_GRP_ID --user-data $USER_DATA)
+RESULT_INSTANCE_ID=$(aws ec2 run-instances --image-id $IMAGE_ID --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --subnet-id $SUBNET_ID --security-group-ids $SEC_GRP_ID --user-data $USER_DATA --output text --query 'Instances[*].InstanceId')
 
 
 # Gather info from ec2 create output
-RESULT_IMAGE=$(echo "$RES" | awk '/^INSTANCE/ {print $6}')
-RESULT_INSTANCE_ID=$(echo "$RES" | awk '/^INSTANCE/ {print $7}')
+RESULT_IMAGE=$(aws ec2 describe-instances --instance-ids $RESULT_INSTANCE_ID --output text --query 'Reservations[*].Instances[*].ImageId')
 
 
 # Double check to see if new ec2 instance was created from correct image
