@@ -58,7 +58,7 @@ node {
             timeout(time: 10, unit: 'MINUTES') {
                 echo 'Here be testing'
             }
-            archiveArtifacts artifacts: '**/prod.sh, **/provisioning/aws_create_instance.sh, **/provisioning/template/*',
+            archiveArtifacts artifacts: 'prod.sh, provisioning/*',
                         fingerprint: true
        }
 

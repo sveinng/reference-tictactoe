@@ -45,7 +45,7 @@ services:
     container_name: ttt-server
     environment:
       - 'PORT=80'
-      - 'NODE_ENV=production'
+      - 'NODE_ENV=OP_MODE'
       - 'PGUSER=postgres'
       - 'PGPASSWORD=CVakcK22D4pntv7Y'
       - 'PGHOST=pg-prod'

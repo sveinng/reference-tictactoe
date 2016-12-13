@@ -142,7 +142,7 @@ fi
 
 # Create bootstrap script for give image
 sed s/GIT_COMMIT_PLACEHOLDER/$GIT_REV/g template/aws_bootstrap.$IMAGE_ID > aws_bootstrap.sh
-sed -i '' s/production/$OP_MODE/g aws_bootstrap.sh
+sed -i s/OP_MODE/$OP_MODE/g aws_bootstrap.sh
 
 # Create ec2 instance and collect results
 RES=$(aws ec2 run-instances --image-id $IMAGE_ID --count $COUNT --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --subnet-id $SUBNET_ID --security-group-ids $SEC_GRP_ID --user-data $USER_DATA)
@@ -208,10 +208,9 @@ log "It will be fully upgraded and operating within 4 minutes"
 log "Use the following command to monitor the setup process"
 
 if [ $IMAGE_ID = "ami-0d77397e" ] ; then
-  printf 'ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no tictactoe.sveinng.com "tail -f /var/log/cloud-init-output.log"\n'
+  log 'To connect: ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no tictactoe.sveinng.com "tail -f /var/log/cloud-init-output.log"\n'
 else
-  printf 'ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no tictactoe.sveinng.com "tail -f /var/log/cloud-init-output.log"\n'
+  log 'To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no tictactoe.sveinng.com "tail -f /var/log/cloud-init-output.log"\n'
 fi
 
-rm aws_bootstrap.sh
 exit 0
