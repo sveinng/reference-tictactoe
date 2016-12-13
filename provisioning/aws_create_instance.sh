@@ -137,7 +137,7 @@ if [ $GIT_REV == "latest" ] ; then
   GIT_REV=$(git ls-remote  https://github.com/sveinng/reference-tictactoe HEAD | cut -f1)
   log "Latest git revision is : $GIT_REV"
 else
-  if curl -sI https://github.com/sveinng/reference-tictactoe/commit/$GIT_REV/|grep "200 OK" > /dev/null 2>&1 ; then
+  if ! curl -sI https://github.com/sveinng/reference-tictactoe/commit/$GIT_REV | grep "200 OK" > /dev/null 2>&1 ; then
     log "ERR  git revision not valid"
     abort
   else
