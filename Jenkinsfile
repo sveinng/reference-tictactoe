@@ -51,14 +51,14 @@ node {
        // Deploy Docker image to AWS for load testing
        stage('Production') {
             echo 'Delploy to AWS - PRODUCTION'
-            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 prod'
+            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 production'
             echo 'Waiting for system Ready'
-	    sh 'echo ./provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 prod > prod.sh'
+	    sh 'echo ./provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 production > deploy.sh'
             echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
                 echo 'Here be testing'
             }
-            archiveArtifacts artifacts: 'prod.sh, provisioning/aws_create_instance.sh, provisioning/template/*',
+            archiveArtifacts artifacts: 'deploy.sh, provisioning/aws_create_instance.sh, provisioning/template/*',
                         fingerprint: true
        }
 
