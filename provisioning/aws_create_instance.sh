@@ -123,7 +123,7 @@ elif [ $OP_MODE == "prod" ] ; then
     HOST="tictactoe.sveinng.com"
 else
     echo "Unknown operation mode!"
-    echo "Valid modes are: production / test"
+    echo "Valid modes are: prod / test"
     abort
 fi
 

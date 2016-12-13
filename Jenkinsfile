@@ -53,7 +53,7 @@ node {
             echo 'Delploy to AWS - PRODUCTION'
             sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) awslinux prod wait'
             echo 'Waiting for system Ready'
-	    sh 'echo ./provisioning/aws_create_instance.sh $(cat build/githash.txt) awslinux production wait > deploy.sh'
+	    sh 'echo ./provisioning/aws_create_instance.sh $(cat build/githash.txt) awslinux prod wait > deploy.sh'
             echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
                 echo 'Here be testing'
