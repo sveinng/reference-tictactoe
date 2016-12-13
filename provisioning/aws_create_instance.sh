@@ -173,8 +173,8 @@ fi
 
 
 # Create bootstrap script for give image
-sed s/GIT_COMMIT_PLACEHOLDER/${GIT_REV}/g template/aws_bootstrap.$IMAGE_ID > aws_bootstrap.sh
-sed -i "" s/OP_MODE/${OP_MODE}/g aws_bootstrap.sh
+sed s/GIT_COMMIT_PLACEHOLDER/${GIT_REV}/g template/aws_bootstrap.$IMAGE_ID > aws_bootstrap.tmp
+sed s/OP_MODE/${OP_MODE}/g aws_bootstrap.tmp > aws_bootstrap.sh
 
 
 # Create ec2 instance and collect results
