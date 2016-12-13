@@ -15,7 +15,7 @@ node {
             echo '*** Installing node_modules'
             sh 'scripts/install-node-modules.sh'
             echo '*** Running server unit test'
-            sh 'npm test'
+            sh 'npm run unit'
             echo '*** Running client unit test'
             sh 'npm --prefix ./client run unit --coverage'
        }
@@ -30,18 +30,18 @@ node {
        // Deploy Docker image to AWS for acceptance testing
        stage('Acceptance test') {
             echo 'Delploy to AWS - ACCEPTANCE TESTING'
-            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 test'
+            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 test wait'
             echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
-                echo 'Here be testing'
+                npm run apitest
             }
-
+            sh './provisioning/aws_delete_instances.sh test'
        }
 
        // Deploy Docker image to AWS for load testing
        stage('Load test') {
             echo 'Delploy to AWS - LOAD TESTING'
-            //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 load'
+            //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 load wait'
             echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
                 echo 'Here be testing'
@@ -51,9 +51,9 @@ node {
        // Deploy Docker image to AWS for load testing
        stage('Production') {
             echo 'Delploy to AWS - PRODUCTION'
-            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 production'
+            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 prod wait'
             echo 'Waiting for system Ready'
-	    sh 'echo ./provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 production > deploy.sh'
+	    sh 'echo ./provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 production wait > deploy.sh'
             echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
                 echo 'Here be testing'

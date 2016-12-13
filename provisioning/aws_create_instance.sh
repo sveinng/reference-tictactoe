@@ -8,7 +8,7 @@
 
 
 abort() {
-  echo "...abort..."
+  log "***************  AWS PROVISIONING ABORTED  ***************"
   exit 1
 }
 
@@ -30,9 +30,7 @@ RUNDIR=$(dirname $0)
 
 ###############################################################################################
 # Config part
-
-# Number of instances to create
-COUNT=1
+###############################################################################################
 
 # Instance type - the free type is t2.micro - 1 GB Ram - 1 vCPU
 INSTANCE_TYPE="t2.micro"
@@ -49,52 +47,80 @@ SEC_GRP_ID="sg-81d35ee7"
 # User data - file containing the boostrap scripts injected to newly created image
 USER_DATA="file://aws_bootstrap.sh"
 
+# Max wait (in sec) for http to become ready
+MAX_WAIT=600
+
 # Allocation ID - id of Elastic IP -
 # PROD eipalloc-a5ffd0c1 has the public IP : 52.209.246.223
 # TEST eipalloc-cc4963a8 has the public IP : 52.19.160.110
 PROD_ALLOCATION_ID="eipalloc-a5ffd0c1"
 TEST_ALLOCATION_ID="eipalloc-cc4963a8"
 
-# AWS tags for new instance - type:ttt-server & role:production are the current tags
+# AWS tags for new instance - type:ttt-server is default for all TicTacToe servers
 AWS_TAG1="Key=type,Value=ttt-server"
+#
 PROD_AWS_TAG="Key=role,Value=prod"
-PROD_AWS_NAME="Key=Name,Value=TicTacToe_PROD"
+PROD_AWS_NAME="Key=Name,Value=TTT_PROD"
+#
 TEST_AWS_TAG="Key=role,Value=test"
-TEST_AWS_NAME="Key=Name,Value=TicTacToe_TEST"
+TEST_AWS_NAME="Key=Name,Value=TTT_TEST"
 
-# Max wait time for instance to become running in seconds (not counting aws cli runtime)
-MAX_WAIT=60
-
+# AWS OS Images
+UBUNTU="ami-0d77397e"
+AWSLINUX="ami-9398d3e0"
 
 ###############################################################################################
 # CLI part
+###############################################################################################
 
-if [[ ! $# -eq 3 ]] ; then
-  printf "\n\t usage $0 <git revision> <aws image id> <test|production>"
+if [[  $# -lt 3 || $# -gt 4 ]] ; then
+  printf "\n\t usage $0 <git revision> <ubuntu|awslinux> <test|prod> [wait]"
   printf "\n\t git revision: use full git revision string or latest for latest git revision"
   printf "\n\t aws image id: available images are"
-  printf "\n\t\t ami-0d77397e -> Ubuntu Server 16.04 LTS (HVM), SSD Volume Type"
-  printf "\n\t\t ami-9398d3e0 -> Amazon Linux AMI 2016.09.0 (HVM), SSD Volume Type"
+  printf "\n\t\t ubuntu   = ami-0d77397e -> Ubuntu Server 16.04 LTS (HVM), SSD Volume Type"
+  printf "\n\t\t awslinux = ami-9398d3e0 -> Amazon Linux AMI 2016.09.0 (HVM), SSD Volume Type"
+  printf "\n\n\t\t wait - wait for ec2 instance to become ready (optiona)"
   printf "\n\n"
   exit
 fi
 
 GIT_REV=$1
-IMAGE_ID=$2
+IMAGE=$2
 OP_MODE=$3
+if [ $# -eq 4 ] ; then
+  EC2_WAIT=$4
+else
+  EC2_WAIT="undef"
+fi
 
 
 ###############################################################################################
-# Validate input
+# Validate input ( check if git tag and docker tag really exists - check for valid os image )
+###############################################################################################
 
+# Validate OS image
+if [ $IMAGE == "ubuntu" ] ; then
+  IMAGE_ID=$UBUNTU
+elif [ $IMAGE == "awslinux" ] ; then
+  IMAGE_ID=$AWSLINUX
+else
+  echo "Unknown OS image"
+  echo "Valid images are: ubuntu / awslinux"
+  abort
+fi
+
+# Validate operating mode (test/prod)
 if [ $OP_MODE == "test" ] ; then
     ALLOCATION_ID=$TEST_ALLOCATION_ID
     AWS_TAG2=$TEST_AWS_TAG
     AWS_NAME=$TEST_AWS_NAME
-elif [ $OP_MODE = "production" ] ; then
+    HOST="test.tictactoe.sveinng.com"
+elif [ $OP_MODE == "prod" ] ; then
+    OP_MODE=production
     ALLOCATION_ID=$PROD_ALLOCATION_ID
     AWS_TAG2=$PROD_TAG_TEST
     AWS_NAME=$PROD_AWS_NAME
+    HOST="tictactoe.sveinng.com"
 else
     echo "Unknown operation mode!"
     echo "Valid modes are: production / test"
@@ -102,14 +128,16 @@ else
 fi
 
 
-log "Creating $COUNT x $INSTANCE_TYPE $OP_MODE instance from $IMAGE_ID running sveinn/tictactoe:$GIT_REV"
+log "===============  AWS PROVISIONING STARTED  ==============="
+log "Creating $INSTANCE_TYPE $OP_MODE instance from $IMAGE_ID running sveinn/tictactoe:$GIT_REV"
 
 # Check if GIT tag really exists in git
-if [ $GIT_REV = "latest" ] ; then
-  GIT_REV=$(git rev-parse HEAD)
+# Use curl to github instead of git commands for portability - this way we test can be run from anywhere
+if [ $GIT_REV == "latest" ] ; then
+  GIT_REV=$(git ls-remote  https://github.com/sveinng/reference-tictactoe HEAD | cut -f1)
   log "Latest git revision is : $GIT_REV"
 else
-  if ! git rev-list HEAD | grep $GIT_REV >/dev/null 2>&1 ; then
+  if curl -sI https://github.com/sveinng/reference-tictactoe/commit/$GIT_REV/|grep "200 OK" > /dev/null 2>&1 ; then
     log "ERR  git revision not valid"
     abort
   else
@@ -119,6 +147,7 @@ fi
 
 
 # Check if docker repo has image with given tag
+# Use curl to docker hub for portability - this way test can be run from anywhere
 curl -si https://registry.hub.docker.com/v2/repositories/sveinn/tictactoe/tags/$GIT_REV/|grep "200 OK" > /dev/null 2>&1
 if [ $? -eq 0 ] ; then
   log "Docker repo image found"
@@ -128,7 +157,8 @@ else
   abort
 fi
 
-# Check if bootstrap template exists for id
+
+# Check if bootstrap template exists for os image id
 if [ -e template/*.$IMAGE_ID ] ; then
   log "Valid AWS Image"
 else
@@ -139,20 +169,25 @@ fi
 
 ###############################################################################################
 # Running part
+###############################################################################################
+
 
 # Create bootstrap script for give image
-sed s/GIT_COMMIT_PLACEHOLDER/$GIT_REV/g template/aws_bootstrap.$IMAGE_ID > aws_bootstrap.sh
-sed -i s/OP_MODE/$OP_MODE/g aws_bootstrap.sh
+sed s/GIT_COMMIT_PLACEHOLDER/${GIT_REV}/g template/aws_bootstrap.$IMAGE_ID > aws_bootstrap.sh
+sed -i "" s/OP_MODE/${OP_MODE}/g aws_bootstrap.sh
+
 
 # Create ec2 instance and collect results
-RES=$(aws ec2 run-instances --image-id $IMAGE_ID --count $COUNT --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --subnet-id $SUBNET_ID --security-group-ids $SEC_GRP_ID --user-data $USER_DATA)
+RES=$(aws ec2 run-instances --image-id $IMAGE_ID --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --subnet-id $SUBNET_ID --security-group-ids $SEC_GRP_ID --user-data $USER_DATA)
+
 
 # Gather info from ec2 create output
 RESULT_IMAGE=$(echo "$RES" | awk '/^INSTANCE/ {print $6}')
 RESULT_INSTANCE_ID=$(echo "$RES" | awk '/^INSTANCE/ {print $7}')
 
+
 # Double check to see if new ec2 instance was created from correct image
-if [[ $RESULT_IMAGE = $IMAGE_ID ]] ; then
+if [[ $RESULT_IMAGE == $IMAGE_ID ]] ; then
   log "AWS ec2 instance created"
 else
   log "ERR  AWS ec2 instance created with strange image id: $RESULT_IMAGE - something went wrong!"
@@ -160,21 +195,15 @@ else
 fi
 
 
-let WAIT=0
-STATUS="pending"
-log "Waiting for instance to enter running state (max $MAX_WAIT sec)"
-
-# Wait for instance to enter the running state
-while [[ $STATUS != "running" ]] ; do
-  sleep 5 ; let WAIT=$WAIT+5
-  STATUS=$(aws ec2 describe-instance-status --instance-ids $RESULT_INSTANCE_ID | awk  '/^INSTANCESTATE/ {print $3}')
-  if [[ $WAIT -gt $MAX_WAIT ]] ; then
-    log "ERR  Gave up waiting for AWS ec2 instance"
-    abort
-  fi
-  log "..$WAIT sec.. "
-done
-log "AWS ec2 instance has entered running state"
+# Wait for ec2 machine until it is operational
+log "Waiting for AWS ec2 instance to enter running state (max 10 min)"
+RES=$(aws ec2 wait instance-running --instance-ids $RESULT_INSTANCE_ID)
+if [[ $? -ne 0 ]] ; then
+  log "ERR  Something went wrong waiting for ec2 machine to enter running state"
+  abort
+else
+  log "AWS ec2 instance has entered running state"
+fi
 
 
 # Assign Elastic IP to newly created ec2 instance
@@ -201,16 +230,39 @@ fi
 
 # Verify current hostname and external IP address
 IP=$(aws ec2 describe-instances --instance-ids $RESULT_INSTANCE_ID | awk '/^INSTANCES/ {print $15}')
-
-
 log "Successfully created AWS ec2 instance: $RESULT_INSTANCE_ID @ $IP"
-log "It will be fully upgraded and operating within 4 minutes"
-log "Use the following command to monitor the setup process"
 
-if [ $IMAGE_ID = "ami-0d77397e" ] ; then
-  log 'To connect: ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no tictactoe.sveinng.com "tail -f /var/log/cloud-init-output.log"\n'
+
+# Wait for ec2 instance to start serving http
+if [ $EC2_WAIT == "wait" ] ; then
+  let WAIT=0
+  STATUS="pending"
+  log "Waiting for AWS ec2 instance to start serving HTTP requests (max 10 min)"
+  curl --connect-timeout 2 -sI http://${HOST} | grep "200 OK" > /dev/null 2>&1
+  while [[ $? -ne 0 ]] ; do
+    if [[ $WAIT -gt $MAX_WAIT ]] ; then
+      log "ERR  Gave up waiting for AWS ec2 instance"
+      abort
+    fi
+    sleep 13 ; let WAIT=$WAIT+15
+    log "Waiting for AWS ec2 ... $WAIT sec"
+    curl --connect-timeout 2 -sI http://${HOST} | grep "200 OK" > /dev/null 2>&1
+  done
+  log "AWS ec2 instance is serving HTTP (yeah!)"
 else
-  log 'To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no tictactoe.sveinng.com "tail -f /var/log/cloud-init-output.log"\n'
+  log "It will be fully upgraded and operating within 4 minutes"
+  log "Use the following command to monitor the setup process"
+
+  if [ $IMAGE_ID == "ami-0d77397e" ] ; then
+    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no $HOST"
+  else
+    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no $HOST"
+  fi
 fi
 
+
+# Remove bootstrap file
+rm aws_bootstrap.sh
+
+log "==============  AWS PROVISIONING SUCCESSFUL  =============="
 exit 0
