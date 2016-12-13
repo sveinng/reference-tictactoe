@@ -32,7 +32,7 @@ node {
        stage('Acceptance test') {
             echo 'Delploy to AWS - ACCEPTANCE TESTING'
             sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 test'
-            echo 'Waiting for system Ready"
+            echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
                 echo 'Here be testing'
             }
@@ -43,7 +43,7 @@ node {
        stage('Load test') {
             echo 'Delploy to AWS - LOAD TESTING'
             //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 load'
-            echo 'Waiting for system Ready"
+            echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
                 echo 'Here be testing'
             }
@@ -53,9 +53,9 @@ node {
        stage('Production') {
             echo 'Delploy to AWS - PRODUCTION'
             //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 prod'
-            echo 'Waiting for system Ready"
+            echo 'Waiting for system Ready'
 	    sh 'echo ./provisioning/aws_create_instance.sh $(cat build/githash.txt) ami-9398d3e0 prod > prod.sh'
-            echo 'Waiting for system Ready"
+            echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
                 echo 'Here be testing'
             }
