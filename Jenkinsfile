@@ -4,18 +4,10 @@
 node {
 
     try {
-
-       // Build Docker images from scratch and push to Docker hub
-       stage('Build') {
-            notifyBuild('STARTED')
-            checkout scm
-            sh './scripts/build.sh'
-            sh './scripts/delete-all-dockers.sh'
-            sh './scripts/build-docker.sh'
-       }
-
        // Prepare build environment and run unit tests
        stage('Unit Test') {
+            notifyBuild('STARTED')
+            checkout scm
             env.NODE_ENV = "test"
             print "Testing environment will be : ${env.NODE_ENV}"
             sh 'node -v'
@@ -26,6 +18,13 @@ node {
             sh 'npm test'
             echo '*** Running client unit test'
             sh 'npm --prefix ./client run unit --coverage'
+       }
+
+       // Build Docker images from scratch and push to Docker hub
+       stage('Build') {
+            sh './scripts/build.sh'
+            sh './scripts/delete-all-dockers.sh'
+            sh './scripts/build-docker.sh'
        }
 
        // Deploy Docker image to AWS for acceptance testing
