@@ -33,7 +33,7 @@ node {
             sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) awslinux test wait'
             echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
-                npm run apitest
+                sh 'npm run apitest'
             }
             sh './provisioning/aws_delete_instances.sh test'
        }
