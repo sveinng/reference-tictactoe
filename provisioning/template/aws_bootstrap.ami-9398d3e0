@@ -114,5 +114,7 @@ chmod 755 /etc/init.d/dockercompose
 echo "*** Configuring docker compose autostart"
 chkconfig --add dockercompose
 
-echo "*** All done - start dockers"
+echo "*** Start dockers"
 service dockercompose start
+
+echo "*** Bootstrap done!"

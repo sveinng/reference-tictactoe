@@ -105,5 +105,8 @@ chmod +x ~ubuntu/run-compose.sh ~ubuntu/stop-compose.sh
 echo "*** Configuring systemd to control docker"
 systemctl enable docker-ttt.service
 
+echo "*** Install Datadog monitor agent"
+DD_API_KEY=541d9973f1d76fdc58142c0a03c97e6b bash -c "$(curl -L https://raw.githubusercontent.com/DataDog/dd-agent/master/packaging/datadog-agent/source/install_agent.sh)"
+
 echo "*** All done - lets reboot and get to business!"
 reboot

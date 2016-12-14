@@ -197,6 +197,10 @@ fi
 sed s/GIT_COMMIT_PLACEHOLDER/${GIT_REV}/g template/aws_bootstrap.$IMAGE_ID > aws_bootstrap-$$.tmp
 sed s/OP_MODE/${OP_MODE}/g aws_bootstrap-$$.tmp > aws_bootstrap-$$.sh
 
+if [ $OP_MODE == "production" ] ; then
+  cat template/aws_datadog.sh >> aws_bootstrap-$$.sh
+fi
+
 
 # Create ec2 instance and collect results
 RESULT_INSTANCE_ID=$(aws ec2 run-instances --image-id $IMAGE_ID --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --subnet-id $SUBNET_ID --security-group-ids $SEC_GRP_ID --user-data $USER_DATA --output text --query 'Instances[*].InstanceId')
