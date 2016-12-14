@@ -7,6 +7,10 @@
 # ami-9398d3e0 -> Amazon Linux AMI 2016.09.0 (HVM), SSD Volume Type
 
 
+###############################################################################################
+# Logging functions
+###############################################################################################
+
 abort() {
   log "***************  AWS PROVISIONING ABORTED  ***************"
   exit 1
@@ -17,9 +21,9 @@ log() {
 }
 
 
-
 ###############################################################################################
 # Check current working directory
+###############################################################################################
 
 # Get current rundir (where script is executed from)
 RUNDIR=$(dirname $0)
@@ -45,7 +49,7 @@ SUBNET_ID="subnet-2b47105d"
 SEC_GRP_ID="sg-81d35ee7"
 
 # User data - file containing the boostrap scripts injected to newly created image
-USER_DATA="file://aws_bootstrap.sh"
+USER_DATA="file://aws_bootstrap-$$.sh"
 
 # Max wait (in sec) for http to become ready
 MAX_WAIT=600
@@ -68,6 +72,7 @@ TEST_AWS_NAME="Key=Name,Value=TTT_TEST"
 # AWS OS Images
 UBUNTU="ami-0d77397e"
 AWSLINUX="ami-9398d3e0"
+
 
 ###############################################################################################
 # CLI part
@@ -171,25 +176,31 @@ fi
 # Running part
 ###############################################################################################
 
-
 # Create bootstrap script for give image
-sed s/GIT_COMMIT_PLACEHOLDER/${GIT_REV}/g template/aws_bootstrap.$IMAGE_ID > aws_bootstrap.tmp
-sed s/OP_MODE/${OP_MODE}/g aws_bootstrap.tmp > aws_bootstrap.sh
+sed s/GIT_COMMIT_PLACEHOLDER/${GIT_REV}/g template/aws_bootstrap.$IMAGE_ID > aws_bootstrap-$$.tmp
+sed s/OP_MODE/${OP_MODE}/g aws_bootstrap-$$.tmp > aws_bootstrap-$$.sh
 
 
 # Create ec2 instance and collect results
 RESULT_INSTANCE_ID=$(aws ec2 run-instances --image-id $IMAGE_ID --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --subnet-id $SUBNET_ID --security-group-ids $SEC_GRP_ID --user-data $USER_DATA --output text --query 'Instances[*].InstanceId')
+if [[ $? -ne 0 ]] ; then
+  log "ERR  Error while creating ec2 instance!"
+  abort
+else
+  log "AWS ec2 instance created - id $RESULT_INSTANCE_ID created"
+fi
 
 
-# Gather info from ec2 create output
-RESULT_IMAGE=$(aws ec2 describe-instances --instance-ids $RESULT_INSTANCE_ID --output text --query 'Reservations[*].Instances[*].ImageId')
+# Gather info on new ec2 instance
+RESULT_IMAGE=$(aws ec2 describe-instances --instance-ids $RESULT_INSTANCE_ID --output text --query 'Reservations[0].Instances[0].ImageId')
+TMP_PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $RESULT_INSTANCE_ID --output text --query 'Reservations[0].Instances[0].PublicIpAddress')
 
 
 # Double check to see if new ec2 instance was created from correct image
 if [[ $RESULT_IMAGE == $IMAGE_ID ]] ; then
-  log "AWS ec2 instance created"
+  log "AWS ec2 instance verified with correct image - id $RESULT_IMAGE"
 else
-  log "ERR  AWS ec2 instance created with strange image id: $RESULT_IMAGE - something went wrong!"
+  log "ERR  AWS ec2 instance created with wrong image - id $RESULT_IMAGE - something went wrong!"
   abort
 fi
 
@@ -202,6 +213,36 @@ if [[ $? -ne 0 ]] ; then
   abort
 else
   log "AWS ec2 instance has entered running state"
+fi
+
+
+# Wait for ec2 instance to start serving http
+if [ $EC2_WAIT == "wait" ] ; then
+  let WAIT=0
+  STATUS="pending"
+  log "Waiting for AWS ec2 instance to start serving HTTP requests (max 10 min)"
+  curl --connect-timeout 2 -sI http://${TMP_PUBLIC_IP} | grep "200 OK" > /dev/null 2>&1
+  while [[ $? -ne 0 ]] ; do
+    if [[ $WAIT -gt $MAX_WAIT ]] ; then
+      log "ERR  Gave up waiting for AWS ec2 instance"
+      abort
+    fi
+    sleep 13 ; let WAIT=$WAIT+15
+    log "Waiting for AWS ec2 ... $WAIT sec"
+    curl --connect-timeout 2 -sI http://${TMP_PUBLIC_IP} | grep "200 OK" > /dev/null 2>&1
+  done
+  log "AWS ec2 instance is serving HTTP (yeah!)"
+else
+  log "It will be fully upgraded and operating within 4 minutes"
+  log "Use the following command to monitor the setup process"
+
+  if [ $IMAGE_ID == "ami-0d77397e" ] ; then
+    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no $TMP_PUBLIC_IP"
+    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no $HOST"
+  else
+    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no $TMP_PUBLIC_IP"
+    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no $HOST"
+  fi
 fi
 
 
@@ -227,41 +268,13 @@ else
 fi
 
 
-# Verify current hostname and external IP address
-IP=$(aws ec2 describe-instances --instance-ids $RESULT_INSTANCE_ID | awk '/^INSTANCES/ {print $15}')
+# Verify current external IP address
+IP=$(aws ec2 describe-instances --instance-ids $RESULT_INSTANCE_ID --output text --query 'Reservations[0].Instances[0].PublicIpAddress')
 log "Successfully created AWS ec2 instance: $RESULT_INSTANCE_ID @ $IP"
 
 
-# Wait for ec2 instance to start serving http
-if [ $EC2_WAIT == "wait" ] ; then
-  let WAIT=0
-  STATUS="pending"
-  log "Waiting for AWS ec2 instance to start serving HTTP requests (max 10 min)"
-  curl --connect-timeout 2 -sI http://${HOST} | grep "200 OK" > /dev/null 2>&1
-  while [[ $? -ne 0 ]] ; do
-    if [[ $WAIT -gt $MAX_WAIT ]] ; then
-      log "ERR  Gave up waiting for AWS ec2 instance"
-      abort
-    fi
-    sleep 13 ; let WAIT=$WAIT+15
-    log "Waiting for AWS ec2 ... $WAIT sec"
-    curl --connect-timeout 2 -sI http://${HOST} | grep "200 OK" > /dev/null 2>&1
-  done
-  log "AWS ec2 instance is serving HTTP (yeah!)"
-else
-  log "It will be fully upgraded and operating within 4 minutes"
-  log "Use the following command to monitor the setup process"
-
-  if [ $IMAGE_ID == "ami-0d77397e" ] ; then
-    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no $HOST"
-  else
-    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no $HOST"
-  fi
-fi
-
-
-# Remove bootstrap file
-rm aws_bootstrap.sh
+# Remove bootstrap files
+rm aws_bootstrap-$$.tmp aws_bootstrap-$$.sh
 
 log "==============  AWS PROVISIONING SUCCESSFUL  =============="
 exit 0
