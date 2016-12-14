@@ -20,6 +20,23 @@ log() {
   echo "$(date "+%Y-%m-%d %H:%M:%S") - $1" | tee -a provision.log
 }
 
+wait() {
+  let WAIT=0
+  STATUS="pending"
+  log "Waiting for AWS ec2 instance to start serving HTTP requests @ $1 (max 10 min)"
+  curl --connect-timeout 2 -sI http://${1} | grep "200 OK" > /dev/null 2>&1
+  while [[ $? -ne 0 ]] ; do
+    if [[ $WAIT -gt $MAX_WAIT ]] ; then
+      log "ERR  Gave up waiting for AWS ec2 instance @ $1"
+      abort
+    fi
+    sleep 13 ; let WAIT=$WAIT+15
+    log "Waiting for AWS ec2 ... $WAIT sec"
+    curl --connect-timeout 2 -sI http://${1} | grep "200 OK" > /dev/null 2>&1
+  done
+  log "AWS ec2 instance is serving HTTP @ $1 (yeah!)"
+}
+
 
 ###############################################################################################
 # Check current working directory
@@ -218,30 +235,15 @@ fi
 
 # Wait for ec2 instance to start serving http
 if [ $EC2_WAIT == "wait" ] ; then
-  let WAIT=0
-  STATUS="pending"
-  log "Waiting for AWS ec2 instance to start serving HTTP requests (max 10 min)"
-  curl --connect-timeout 2 -sI http://${TMP_PUBLIC_IP} | grep "200 OK" > /dev/null 2>&1
-  while [[ $? -ne 0 ]] ; do
-    if [[ $WAIT -gt $MAX_WAIT ]] ; then
-      log "ERR  Gave up waiting for AWS ec2 instance"
-      abort
-    fi
-    sleep 13 ; let WAIT=$WAIT+15
-    log "Waiting for AWS ec2 ... $WAIT sec"
-    curl --connect-timeout 2 -sI http://${TMP_PUBLIC_IP} | grep "200 OK" > /dev/null 2>&1
-  done
-  log "AWS ec2 instance is serving HTTP (yeah!)"
+  wait $TMP_PUBLIC_IP
 else
   log "It will be fully upgraded and operating within 4 minutes"
   log "Use the following command to monitor the setup process"
 
   if [ $IMAGE_ID == "ami-0d77397e" ] ; then
     log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no $TMP_PUBLIC_IP"
-    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no $HOST"
   else
     log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no $TMP_PUBLIC_IP"
-    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no $HOST"
   fi
 fi
 
@@ -254,6 +256,17 @@ if [[ $? -ne 0 ]] ; then
   abort
 else
   log "Instance assigned to Elastic IP"
+fi
+
+# Verify Elastic IP is activated
+if [ $EC2_WAIT == "wait" ] ; then
+  wait $HOST
+else
+  if [ $IMAGE_ID == "ami-0d77397e" ] ; then
+    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no $HOST"
+  else
+    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no $HOST"
+  fi
 fi
 
 
