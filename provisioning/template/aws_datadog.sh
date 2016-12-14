@@ -4,7 +4,9 @@ usermod -a -G docker dd-agent
 
 cat <<EOF > /etc/dd-agent/conf.d/docker_daemon.yaml
 init_config:
+
 instances:
+  - ## Daemon and system configuration
     url: "unix://var/run/docker.sock"
 EOF
 
