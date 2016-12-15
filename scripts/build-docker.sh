@@ -99,8 +99,10 @@ fi
 # Check if the new image can be found on Docker hub
 # Use curl to docker hub for portability - this way test can be run from anywhere
 echo Verify Docker image is available on Docker hub
-let COUNT=0
+
+COUNT=0
 curl -si https://registry.hub.docker.com/v2/repositories/sveinn/tictactoe/tags/$GIT_COMMIT/|grep "200 OK" > /dev/null 2>&1
+
 if [ $? -ne 0 ] ; then
   echo Docker image not found on Docker hub after push
   if [ $COUNT -gt 5 ] ; then
