@@ -98,7 +98,10 @@ fi
 
 # Check if the new image can be found on Docker hub
 # Use curl to docker hub for portability - this way test can be run from anywhere
+# set +e while checking - otherwise test will fail on first failure
+
 echo Verify Docker image is available on Docker hub
+set +e
 
 COUNT=0
 curl -si https://registry.hub.docker.com/v2/repositories/sveinn/tictactoe/tags/$GIT_COMMIT/|grep "200 OK" > /dev/null 2>&1
@@ -114,6 +117,8 @@ if [ $? -ne 0 ] ; then
   curl -si https://registry.hub.docker.com/v2/repositories/sveinn/tictactoe/tags/$GIT_COMMIT/|grep "200 OK" > /dev/null 2>&1
 fi
 
+# Resume set -e - exit on all failures
+set -e
 
 echo Refreshing Yarn lock and cache
 cd ../
