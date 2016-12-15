@@ -27,33 +27,28 @@ node {
             sh './scripts/build-docker.sh'
        }
 
-       // Deploy Docker image to AWS for acceptance testing
-       stage('Acceptance test') {
-            def steps = [:]
-            steps["API test"] = {
-		stage('API regression test') {
-                echo 'Delploy to AWS - ACCEPTANCE TESTING'
-                sh './provisioning/aws_delete_instances.sh test'
-                sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) test wait'
-                timeout(time: 10, unit: 'MINUTES') {
-                    sh 'npm run apitest'
-                }
-                sh './provisioning/aws_delete_instances.sh test'
-           }}
 
-           // Deploy Docker image to AWS for load testing
-           steps['Load test'] {
-		stage('Capacity test') {
-                echo 'Delploy to AWS - LOAD TESTING'
-                //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) load wait'
-                timeout(time: 10, unit: 'MINUTES') {
-                    echo 'Here be testing'
+        stage('Acceptance test') {
+            parallel (
+                "API-test" : {
+                    echo 'Delploy to AWS - ACCEPTANCE TESTING'
+                    sh './provisioning/aws_delete_instances.sh test'
+                    sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) test wait'
+                    timeout(time: 10, unit: 'MINUTES') {
+                        sh 'npm run apitest'
+                    }
+                    sh './provisioning/aws_delete_instances.sh test'
+                }, 
+                "Capacity-test" : {
+                    echo 'Delploy to AWS - LOAD TESTING'
+                    //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) load wait'
+                    timeout(time: 10, unit: 'MINUTES') {
+                        echo 'Here be testing'
+                    }
                 }
-           }}
-
-           // Run steps in parallel
-           parallel steps
+           )
        }
+
 
        // Deploy Docker image to AWS for load testing
        stage('Production') {
