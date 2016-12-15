@@ -20,6 +20,16 @@ instances:
     skip_event: true
 EOF
 
+cat <<EOF > /etc/dd-agent/conf.d/postgres.yaml
+init_config:
+
+instances:
+  - host: localhost
+    port: 5432
+    username: postgres
+    password: CVakcK22D4pntv7Y
+EOF
+
 /etc/init.d/datadog-agent restart
 
 echo "*** Datadog done!"

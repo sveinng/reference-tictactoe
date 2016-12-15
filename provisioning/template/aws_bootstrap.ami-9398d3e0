@@ -51,6 +51,8 @@ services:
     environment:
       - 'POSTGRES_PASSWORD=CVakcK22D4pntv7Y'
     image: postgres
+    ports:
+      - '127.0.0.1:5432:5432'
 EOF
 
 cat <<'EOF' > /etc/init.d/dockercompose

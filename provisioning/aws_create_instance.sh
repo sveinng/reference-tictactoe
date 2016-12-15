@@ -2,9 +2,6 @@
 #
 # Provision AWS ec2 instance and pull docker images to run TicTacToe
 #
-# The following AWS OS images are available
-# ami-0d77397e -> Ubuntu Server 16.04 LTS (HVM), SSD Volume Type
-# ami-9398d3e0 -> Amazon Linux AMI 2016.09.0 (HVM), SSD Volume Type
 
 
 ###############################################################################################
@@ -87,30 +84,26 @@ TEST_AWS_TAG="Key=role,Value=test"
 TEST_AWS_NAME="Key=Name,Value=TTT_TEST"
 
 # AWS OS Images
-UBUNTU="ami-0d77397e"
-AWSLINUX="ami-9398d3e0"
+# ami-9398d3e0 -> Amazon Linux AMI 2016.09.0 (HVM), SSD Volume Type
+IMAGE_ID="ami-9398d3e0"
 
 
 ###############################################################################################
 # CLI part
 ###############################################################################################
 
-if [[  $# -lt 3 || $# -gt 4 ]] ; then
-  printf "\n\t usage $0 <git revision> <ubuntu|awslinux> <test|prod> [wait]"
-  printf "\n\t git revision: use full git revision string or latest for latest git revision"
-  printf "\n\t aws image id: available images are"
-  printf "\n\t\t ubuntu   = ami-0d77397e -> Ubuntu Server 16.04 LTS (HVM), SSD Volume Type"
-  printf "\n\t\t awslinux = ami-9398d3e0 -> Amazon Linux AMI 2016.09.0 (HVM), SSD Volume Type"
-  printf "\n\n\t\t wait - wait for ec2 instance to become ready (optiona)"
+if [[  $# -lt 2 || $# -gt 3 ]] ; then
+  printf "\n\t usage $0 <git revision|latest> <test|prod> [wait]"
+  printf "\n\t git revision   use full git revision string or latest"
+  printf "\n\t wait           wait for ec2 instance to become ready (optiona)"
   printf "\n\n"
   exit
 fi
 
 GIT_REV=$1
-IMAGE=$2
-OP_MODE=$3
+OP_MODE=$2
 if [ $# -eq 4 ] ; then
-  EC2_WAIT=$4
+  EC2_WAIT=$3
 else
   EC2_WAIT="undef"
 fi
@@ -119,17 +112,6 @@ fi
 ###############################################################################################
 # Validate input ( check if git tag and docker tag really exists - check for valid os image )
 ###############################################################################################
-
-# Validate OS image
-if [ $IMAGE == "ubuntu" ] ; then
-  IMAGE_ID=$UBUNTU
-elif [ $IMAGE == "awslinux" ] ; then
-  IMAGE_ID=$AWSLINUX
-else
-  echo "Unknown OS image"
-  echo "Valid images are: ubuntu / awslinux"
-  abort
-fi
 
 # Validate operating mode (test/prod)
 if [ $OP_MODE == "test" ] ; then
@@ -144,8 +126,8 @@ elif [ $OP_MODE == "prod" ] ; then
     AWS_NAME=$PROD_AWS_NAME
     HOST="tictactoe.sveinng.com"
 else
-    echo "Unknown operation mode!"
-    echo "Valid modes are: prod / test"
+    log "ERR  Unknown operation mode!"
+    log "ERR  Valid modes are: prod / test"
     abort
 fi
 
@@ -193,7 +175,7 @@ fi
 # Running part
 ###############################################################################################
 
-# Create bootstrap script for give image
+# Create bootstrap script for ec2 image
 sed s/GIT_COMMIT_PLACEHOLDER/${GIT_REV}/g template/aws_bootstrap.$IMAGE_ID > aws_bootstrap-$$.tmp
 sed s/OP_MODE/${OP_MODE}/g aws_bootstrap-$$.tmp > aws_bootstrap-$$.sh
 

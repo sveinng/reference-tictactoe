@@ -30,7 +30,7 @@ node {
        // Deploy Docker image to AWS for acceptance testing
        stage('Acceptance test') {
             echo 'Delploy to AWS - ACCEPTANCE TESTING'
-            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) awslinux test wait'
+            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) test wait'
             echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
                 sh 'npm run apitest'
@@ -41,7 +41,7 @@ node {
        // Deploy Docker image to AWS for load testing
        stage('Load test') {
             echo 'Delploy to AWS - LOAD TESTING'
-            //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) awslinux load wait'
+            //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) load wait'
             echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
                 echo 'Here be testing'
@@ -51,9 +51,9 @@ node {
        // Deploy Docker image to AWS for load testing
        stage('Production') {
             echo 'Delploy to AWS - PRODUCTION'
-            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) awslinux prod wait'
+            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) prod wait'
             echo 'Waiting for system Ready'
-	    sh 'echo ./provisioning/aws_create_instance.sh $(cat build/githash.txt) awslinux prod wait > deploy.sh'
+	    sh 'echo ./provisioning/aws_create_instance.sh $(cat build/githash.txt) prod wait > deploy.sh'
             echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
                 echo 'Here be testing'
