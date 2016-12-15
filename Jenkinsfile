@@ -5,7 +5,7 @@ node {
 
     try {
        // Prepare build environment and run unit tests
-       stage('Unit Test') {
+       stage('Staging') {
             notifyBuild('STARTED')
             checkout scm
             env.NODE_ENV = "test"
@@ -14,7 +14,9 @@ node {
             sh 'npm -v'
             echo '*** Installing node_modules'
             sh 'scripts/install-node-modules.sh'
+       }
 
+       stage('Unit Test') {
             parallel (
                 "Server" : {
                     echo '*** Running server unit test'
@@ -38,7 +40,7 @@ node {
 
        stage('Acceptance test') {
            parallel (
-               "API-test" : {
+               "API regression" : {
                    echo 'Delploy to AWS - ACCEPTANCE TESTING'
                    sh './provisioning/aws_delete_instances.sh test'
                    sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) test wait'
@@ -47,7 +49,7 @@ node {
                    }
                    sh './provisioning/aws_delete_instances.sh test'
                }, 
-               "Capacity-test" : {
+               "API Capacity" : {
                    echo 'Delploy to AWS - LOAD TESTING'
                    //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) load wait'
                    timeout(time: 10, unit: 'MINUTES') {
