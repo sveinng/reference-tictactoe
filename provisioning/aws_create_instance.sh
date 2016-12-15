@@ -102,7 +102,7 @@ fi
 
 GIT_REV=$1
 OP_MODE=$2
-if [ $# -eq 4 ] ; then
+if [ $# -eq 3 ] ; then
   EC2_WAIT=$3
 else
   EC2_WAIT="undef"
