@@ -31,7 +31,6 @@ wait() {
     log "Waiting for AWS ec2 ... $WAIT sec"
     curl --connect-timeout 2 -sI http://${1} | grep "200 OK" > /dev/null 2>&1
   done
-  sleep 5 # Grace period
   log "AWS ec2 instance is serving HTTP @ $1 (yeah!)"
 }
 

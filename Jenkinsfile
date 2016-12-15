@@ -30,8 +30,8 @@ node {
        // Deploy Docker image to AWS for acceptance testing
        stage('Acceptance test') {
             echo 'Delploy to AWS - ACCEPTANCE TESTING'
+            sh './provisioning/aws_delete_instances.sh test'
             sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) test wait'
-            echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
                 sh 'npm run apitest'
             }
@@ -42,7 +42,6 @@ node {
        stage('Load test') {
             echo 'Delploy to AWS - LOAD TESTING'
             //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) load wait'
-            echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
                 echo 'Here be testing'
             }
@@ -56,7 +55,7 @@ node {
 	    sh 'echo ./provisioning/aws_create_instance.sh $(cat build/githash.txt) prod wait > deploy.sh'
             echo 'Waiting for system Ready'
             timeout(time: 10, unit: 'MINUTES') {
-                echo 'Here be testing'
+                echo 'Here be smoketest'
             }
             archiveArtifacts artifacts: 'deploy.sh, provisioning/aws_create_instance.sh, provisioning/template/*',
                         fingerprint: true
