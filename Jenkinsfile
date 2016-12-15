@@ -14,11 +14,19 @@ node {
             sh 'npm -v'
             echo '*** Installing node_modules'
             sh 'scripts/install-node-modules.sh'
-            echo '*** Running server unit test'
-            sh 'npm run unit'
-            echo '*** Running client unit test'
-            sh 'npm --prefix ./client run unit --coverage'
+
+            parallel (
+                "Server" : {
+                    echo '*** Running server unit test'
+                    sh 'npm run unit'
+                },
+                "Client" : {
+                    echo '*** Running client unit test'
+                    sh 'npm --prefix ./client run unit --coverage'
+                }
+            )
        }
+
 
        // Build Docker images from scratch and push to Docker hub
        stage('Build') {
@@ -28,24 +36,24 @@ node {
        }
 
 
-        stage('Acceptance test') {
-            parallel (
-                "API-test" : {
-                    echo 'Delploy to AWS - ACCEPTANCE TESTING'
-                    sh './provisioning/aws_delete_instances.sh test'
-                    sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) test wait'
-                    timeout(time: 10, unit: 'MINUTES') {
-                        sh 'npm run apitest'
-                    }
-                    sh './provisioning/aws_delete_instances.sh test'
-                }, 
-                "Capacity-test" : {
-                    echo 'Delploy to AWS - LOAD TESTING'
-                    //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) load wait'
-                    timeout(time: 10, unit: 'MINUTES') {
-                        echo 'Here be testing'
-                    }
-                }
+       stage('Acceptance test') {
+           parallel (
+               "API-test" : {
+                   echo 'Delploy to AWS - ACCEPTANCE TESTING'
+                   sh './provisioning/aws_delete_instances.sh test'
+                   sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) test wait'
+                   timeout(time: 10, unit: 'MINUTES') {
+                       sh 'npm run apitest'
+                   }
+                   sh './provisioning/aws_delete_instances.sh test'
+               }, 
+               "Capacity-test" : {
+                   echo 'Delploy to AWS - LOAD TESTING'
+                   //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) load wait'
+                   timeout(time: 10, unit: 'MINUTES') {
+                       echo 'Here be testing'
+                   }
+               }
            )
        }
 
