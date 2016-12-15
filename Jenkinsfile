@@ -31,6 +31,7 @@ node {
        stage('Acceptance test') {
             def steps = [:]
             steps["API test"] = {
+		stage('API regression test') {
                 echo 'Delploy to AWS - ACCEPTANCE TESTING'
                 sh './provisioning/aws_delete_instances.sh test'
                 sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) test wait'
@@ -38,16 +39,17 @@ node {
                     sh 'npm run apitest'
                 }
                 sh './provisioning/aws_delete_instances.sh test'
-           }
+           }}
 
            // Deploy Docker image to AWS for load testing
            stage('Load test') {
+		stage('Capacity test') {
                 echo 'Delploy to AWS - LOAD TESTING'
                 //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) load wait'
                 timeout(time: 10, unit: 'MINUTES') {
                     echo 'Here be testing'
                 }
-           }
+           }}
 
            // Run steps in parallel
            parallel steps
