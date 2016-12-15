@@ -42,7 +42,7 @@ node {
            }}
 
            // Deploy Docker image to AWS for load testing
-           stage('Load test') {
+           steps['Load test'] {
 		stage('Capacity test') {
                 echo 'Delploy to AWS - LOAD TESTING'
                 //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) load wait'
