@@ -111,4 +111,5 @@ https://app.datadoghq.com/infrastructure/map
 * Since Jenkins pipeline process with Jenkinsfile presents no good method for code promotion or code back-out procedure the following workaround was created.
   * All successful builds archive the deployment artifacts on Jenkins server. These artifacts can be used to deploy the specific build to production.
   * By entering a successful build number from the main project into the TicTacToe_Manual_Deployment project - the artifacts from that specific build are executed again - effectively deploying that specific build from Docker Hub into production.
+* Jenkins Blue Ocean activated. Gives very nice Pipeline overview!
 * Probably something more that I am forgetting.
