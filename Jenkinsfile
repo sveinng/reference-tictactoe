@@ -51,7 +51,7 @@ node {
                "API Capacity" : {
                    echo 'Delploy to AWS - LOAD TESTING'
                    sh './provisioning/aws_delete_instances.sh test'
-                   sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) test smoke'
+                   sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) load smoke'
                    timeout(time: 10, unit: 'MINUTES') {
                        sh 'npm run loadtest'
                    }
