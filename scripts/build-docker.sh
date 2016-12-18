@@ -27,21 +27,6 @@ fi
 export GITHUB_URL=$(echo $GIT_URL awk -F\: '{print "https://github.com/" $2}' | rev | cut -c 5- | rev)
 
 
-
-# Lets comment this out for now - builds are scripted through Jenkins
-#
-# Run the build script
-#echo Building app
-#npm run build
-
-# If build script exit status is anything else than zero - assume build has failed and exit
-#rc=$?
-#if [[ $rc != 0 ]] ; then
-#    echo "Npm build failed with exit code " $rc
-#    exit $rc
-#fi
-
-
 # Write the git revision to a githash.txt file in the build directory
 cat > ./build/githash.txt <<_EOF_
 $GIT_COMMIT
@@ -66,6 +51,7 @@ _EOF_
 cp ./Dockerfile ./dist/
 cp package.json ./dist/
 cp -r ./build ./dist/
+
 
 # Prepare Yarn - binary - lock and cache
 # If yarn.lock or .yarn-cache.tgz do not exists - create empty ones
