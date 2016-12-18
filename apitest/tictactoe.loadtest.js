@@ -60,7 +60,7 @@ describe('TicTacToe load test', function(){
             });
     });
 
-    fit('should play ' + count + ' games within ' + timelimit + ' ms', function(done){
+    it('should play ' + count + ' games within ' + timelimit + ' ms', function(done){
         var startMillis = new Date().getTime();
         for(var i=0; i<count; i++){
             var userA = userAPI("userA#" + i);
