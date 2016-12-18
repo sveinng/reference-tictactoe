@@ -34,6 +34,7 @@ module.exports = function(injected){
                         }
                         eventHandler([{
                             gameId: cmd.gameId,
+                            commandId: cmd.commandId,
                             type: "GameJoined",
                             user: cmd.user,
                             name: cmd.name,
@@ -63,9 +64,9 @@ module.exports = function(injected){
                             }]);
                             return;
                         }
-
                         var events = [{
                             gameId: cmd.gameId,
+                            commandId: cmd.commandId,
                             type: "MoveMade",
                             user: cmd.user,
                             name: cmd.name,
@@ -77,14 +78,17 @@ module.exports = function(injected){
                         gameState.processEvents(events);
 
                         if(gameState.gameWon(cmd.side)){
+                            tmp = events.pop();
                             events.push({
                                 gameId: cmd.gameId,
+                                commandId: cmd.commandId,
                                 type: "GameWon",
                                 user: cmd.user,
                                 name: cmd.name,
                                 timeStamp: cmd.timeStamp,
                                 side: cmd.side
                             });
+                            events.push(tmp);
                         }
                         else if (gameState.gameDraw()){
                             events.push({
