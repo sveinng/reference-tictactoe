@@ -17,8 +17,7 @@ ENV=$1
 if [[ $ENV = "test" || $ENV = "prod" || $ENV = "load" ]] ; then
   IDS=$(aws ec2 describe-instances --filters "Name=tag:role,Values=${ENV}" "Name=instance-state-name,Values=running" --query 'Reservations[*].Instances[*].InstanceId')
   for ID in $IDS ; do
-    aws ec2 describe-instances  --instance-ids "$ID" --output text --query 'Reservations[0].Instances[0].Tags[0].Value'
-    #aws ec2 terminate-instances --instance-ids "$ID" --output text --query 'TerminatingInstances[*].CurrentState.Name'
+    aws ec2 terminate-instances --instance-ids "$ID" --output text --query 'TerminatingInstances[*].CurrentState.Name'
   done
 else
   echo "ERR - invalid environment"
