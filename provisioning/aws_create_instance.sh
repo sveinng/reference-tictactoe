@@ -123,7 +123,7 @@ fi
 # Validate input ( check if git tag and docker tag really exists - check for valid os image )
 ###############################################################################################
 
-# Validate operating mode (test/prod)
+# Validate operating mode (test/load/prod)
 if [ $OP_MODE == "test" ] ; then
     ALLOCATION_ID=$TEST_ALLOCATION_ID
     AWS_TAG2=$TEST_AWS_TAG
@@ -142,7 +142,7 @@ elif [ $OP_MODE == "prod" ] ; then
     HOST=$PROD_HOST
 else
     log "ERR  Unknown operation mode!"
-    log "ERR  Valid modes are: prod / test"
+    log "ERR  Valid modes are: test / load / prod"
     abort
 fi
 
