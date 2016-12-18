@@ -5,8 +5,9 @@ module.exports = function (injected) {
     return function (history) {
 
         var turns = 0;
-        var lastturn = "none";
-        var gamefull=false;
+        var lastturn = "O";
+        var gamefull = false;
+        var gameover = false;
         var board = [
           [0,0,0],
           [0,0,0],
@@ -56,6 +57,10 @@ module.exports = function (injected) {
             return turns >= 9;
         }
 
+        function getBoard() {
+            return board;
+        }
+
         processEvents(history);
 
         return {
@@ -64,6 +69,7 @@ module.exports = function (injected) {
             cellEmpty: cellEmpty,
             gameWon: gameWon,
             gameDraw: gameDraw,
+            getBoard: getBoard,
             processEvents: processEvents
         }
     };

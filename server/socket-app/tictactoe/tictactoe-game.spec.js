@@ -9,6 +9,7 @@ var tictactoe = require('./tictactoe-handler')(inject({
 
 var eventCreateGame = {
     "gameId":"1337",
+    "commandId": "007",
     "type": "CreateGame",
     "user": { "userName": "Uber" },
     "name": "UberGame",
@@ -26,6 +27,7 @@ var eventGameCreated = {
 
 var eventJoinGame = {
     "gameId":"1337",
+    "commandId": "007",
     "type": "JoinGame",
     "user": { "userName": "Svenson" },
     "name": "UberGame",
@@ -34,6 +36,7 @@ var eventJoinGame = {
 
 var eventGameJoined = {
     "gameId":"1337",
+    "commandId": "007",
     "type": "GameJoined",
     "user": { "userName": "Svenson" },
     "name": "UberGame",
@@ -129,6 +132,7 @@ describe('place move command', function () {
         given = [ eventGameCreated, eventJoinGame ];
         when = {
             "gameId":"1337",
+            "commandId": "007",
             "type": "PlaceMove",
             "user": { "userName": "Uber" },
             "name": "UberGame",
@@ -138,6 +142,7 @@ describe('place move command', function () {
         };
         then = [{
             "gameId": "1337",
+            "commandId": "007",
             "type": "MoveMade",
             "user": { "userName": "Uber" },
             "name": "UberGame",
@@ -151,6 +156,7 @@ describe('place move command', function () {
         given = [ eventGameCreated, eventJoinGame,
             {
                 "gameId": "1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
@@ -160,6 +166,7 @@ describe('place move command', function () {
             } ];
         when = {
             "gameId":"1337",
+            "commandId": "007",
             "type": "PlaceMove",
             "user": { "userName": "Svenson" },
             "name": "UberGame",
@@ -209,6 +216,7 @@ describe('place move command', function () {
         given = [ eventGameCreated, eventJoinGame,
             {
                 "gameId": "1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
@@ -218,6 +226,7 @@ describe('place move command', function () {
             },
             {
                 "gameId":"1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
@@ -227,6 +236,7 @@ describe('place move command', function () {
             },
             {
                 "gameId":"1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Svenson" },
                 "name": "UberGame",
@@ -237,6 +247,7 @@ describe('place move command', function () {
          ];
         when = {
             "gameId":"1337",
+            "commandId": "007",
             "type": "PlaceMove",
             "user": { "userName": "Uber" },
             "name": "UberGame",
@@ -247,20 +258,22 @@ describe('place move command', function () {
         then = [
             {
                 "gameId": "1337",
+                "commandId": "007",
+                "type": "GameWon",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X"
+            },
+            {
+                "gameId": "1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
                 "timeStamp": "2016-12-07T20:56:29",
                 "side": "X",
                 "coordinates": { "x": 2, "y": 0 }
-            },
-            {
-                "gameId": "1337",
-                "type": "GameWon",
-                "user": { "userName": "Uber" },
-                "name": "UberGame",
-                "timeStamp": "2016-12-07T20:56:29",
-                "side": "X"
             } ];
     });
 
@@ -268,6 +281,7 @@ describe('place move command', function () {
         given = [ eventGameCreated, eventJoinGame,
             {
                 "gameId": "1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
@@ -277,6 +291,7 @@ describe('place move command', function () {
             },
             {
                 "gameId":"1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
@@ -286,6 +301,7 @@ describe('place move command', function () {
             },
             {
                 "gameId":"1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Svenson" },
                 "name": "UberGame",
@@ -296,6 +312,7 @@ describe('place move command', function () {
          ];
         when = {
             "gameId":"1337",
+            "commandId": "007",
             "type": "PlaceMove",
             "user": { "userName": "Uber" },
             "name": "UberGame",
@@ -306,20 +323,22 @@ describe('place move command', function () {
         then = [
             {
                 "gameId": "1337",
+                "commandId": "007",
+                "type": "GameWon",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X"
+            },
+            {
+                "gameId": "1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
                 "timeStamp": "2016-12-07T20:56:29",
                 "side": "X",
                 "coordinates": { "x": 0, "y": 2 }
-            },
-            {
-                "gameId": "1337",
-                "type": "GameWon",
-                "user": { "userName": "Uber" },
-                "name": "UberGame",
-                "timeStamp": "2016-12-07T20:56:29",
-                "side": "X"
             } ];
     });
 
@@ -327,6 +346,7 @@ describe('place move command', function () {
         given = [ eventGameCreated, eventJoinGame,
             {
                 "gameId": "1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
@@ -336,6 +356,7 @@ describe('place move command', function () {
             },
             {
                 "gameId":"1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
@@ -345,6 +366,7 @@ describe('place move command', function () {
             },
             {
                 "gameId":"1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Svenson" },
                 "name": "UberGame",
@@ -355,6 +377,7 @@ describe('place move command', function () {
          ];
         when = {
             "gameId":"1337",
+            "commandId": "007",
             "type": "PlaceMove",
             "user": { "userName": "Uber" },
             "name": "UberGame",
@@ -365,20 +388,22 @@ describe('place move command', function () {
         then = [
             {
                 "gameId": "1337",
+                "commandId": "007",
+                "type": "GameWon",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X"
+            },
+            {
+                "gameId": "1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
                 "timeStamp": "2016-12-07T20:56:29",
                 "side": "X",
                 "coordinates": { "x": 2, "y": 2 }
-            },
-            {
-                "gameId": "1337",
-                "type": "GameWon",
-                "user": { "userName": "Uber" },
-                "name": "UberGame",
-                "timeStamp": "2016-12-07T20:56:29",
-                "side": "X"
             } ];
     });
 
@@ -386,6 +411,7 @@ describe('place move command', function () {
         given = [ eventGameCreated, eventJoinGame,
             {
                 "gameId": "1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
@@ -395,6 +421,7 @@ describe('place move command', function () {
             },
             {
                 "gameId":"1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
@@ -404,6 +431,7 @@ describe('place move command', function () {
             },
             {
                 "gameId":"1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Svenson" },
                 "name": "UberGame",
@@ -414,6 +442,7 @@ describe('place move command', function () {
          ];
         when = {
             "gameId":"1337",
+            "commandId": "007",
             "type": "PlaceMove",
             "user": { "userName": "Uber" },
             "name": "UberGame",
@@ -424,20 +453,22 @@ describe('place move command', function () {
         then = [
             {
                 "gameId": "1337",
+                "commandId": "007",
+                "type": "GameWon",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X"
+            },
+            {
+                "gameId": "1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
                 "timeStamp": "2016-12-07T20:56:29",
                 "side": "X",
                 "coordinates": { "x": 2, "y": 0 }
-            },
-            {
-                "gameId": "1337",
-                "type": "GameWon",
-                "user": { "userName": "Uber" },
-                "name": "UberGame",
-                "timeStamp": "2016-12-07T20:56:29",
-                "side": "X"
             } ];
     });
 
@@ -446,6 +477,7 @@ describe('place move command', function () {
         given = [ eventGameCreated, eventJoinGame,
             {
                 "gameId": "1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
@@ -455,6 +487,7 @@ describe('place move command', function () {
             },
             {
                 "gameId":"1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
@@ -464,6 +497,7 @@ describe('place move command', function () {
             },
             {
                 "gameId":"1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Svenson" },
                 "name": "UberGame",
@@ -474,6 +508,7 @@ describe('place move command', function () {
          ];
         when = {
             "gameId":"1337",
+            "commandId": "007",
             "type": "PlaceMove",
             "user": { "userName": "Uber" },
             "name": "UberGame",
@@ -484,20 +519,22 @@ describe('place move command', function () {
         then = [
             {
                 "gameId": "1337",
+                "commandId": "007",
+                "type": "GameWon",
+                "user": { "userName": "Uber" },
+                "name": "UberGame",
+                "timeStamp": "2016-12-07T20:56:29",
+                "side": "X"
+            },
+            {
+                "gameId": "1337",
+                "commandId": "007",
                 "type": "MoveMade",
                 "user": { "userName": "Uber" },
                 "name": "UberGame",
                 "timeStamp": "2016-12-07T20:56:29",
                 "side": "X",
                 "coordinates": { "x": 2, "y": 2 }
-            },
-            {
-                "gameId": "1337",
-                "type": "GameWon",
-                "user": { "userName": "Uber" },
-                "name": "UberGame",
-                "timeStamp": "2016-12-07T20:56:29",
-                "side": "X"
             } ];
     });
 
