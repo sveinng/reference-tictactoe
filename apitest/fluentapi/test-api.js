@@ -3,6 +3,7 @@ module.exports=function(injected){
 
     const io = injected('io');
     const RoutingContext = injected('RoutingContext');
+    var ENV = process.env.NODE_ENV;
 
     var connectCount =0;
 
@@ -12,7 +13,7 @@ module.exports=function(injected){
 
         var routingContext = RoutingContext(inject({
             io,
-            env:"test"
+            env:ENV
         }));
 
         connectCount++;

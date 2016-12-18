@@ -17,14 +17,14 @@ log() {
   echo "$(date "+%Y-%m-%d %H:%M:%S") - $1" | tee -a provision.log
 }
 
-wait() {
+smoke() {
   let WAIT=0
   STATUS="pending"
-  log "Waiting for AWS ec2 instance to start serving HTTP requests @ $1 (max 10 min)"
+  log "SMOKETEST - Waiting for AWS ec2 instance to start serving HTTP requests @ $1 (max 10 min)"
   curl --connect-timeout 2 -sI http://${1} | grep "200 OK" > /dev/null 2>&1
   while [[ $? -ne 0 ]] ; do
     if [[ $WAIT -gt $MAX_WAIT ]] ; then
-      log "ERR  Gave up waiting for AWS ec2 instance @ $1"
+      log "ERR  Gave up smoketest for AWS ec2 instance @ $1"
       abort
     fi
     sleep 13 ; let WAIT=$WAIT+15
@@ -71,8 +71,15 @@ MAX_WAIT=600
 # Allocation ID - id of Elastic IP -
 # PROD eipalloc-a5ffd0c1 has the public IP : 52.209.246.223
 # TEST eipalloc-cc4963a8 has the public IP : 52.19.160.110
+# LOAD eipalloc-8a91a6ee has the public IP : 52.210.125.88
 PROD_ALLOCATION_ID="eipalloc-a5ffd0c1"
 TEST_ALLOCATION_ID="eipalloc-cc4963a8"
+LOAD_ALLOCATION_ID="eipalloc-8a91a6ee"
+
+# Hostnames
+PROD_HOST="tictactoe.sveinng.com"
+TEST_HOST="test.tictactoe.sveinng.com"
+LOAD_HOST="load.tictactoe.sveinng.com"
 
 # AWS tags for new instance - type:ttt-server is default for all TicTacToe servers
 AWS_TAG1="Key=type,Value=ttt-server"
@@ -82,6 +89,9 @@ PROD_AWS_NAME="Key=Name,Value=TTT_PROD"
 #
 TEST_AWS_TAG="Key=role,Value=test"
 TEST_AWS_NAME="Key=Name,Value=TTT_TEST"
+#
+LOAD_AWS_TAG="Key=role,Value=load"
+LOAD_AWS_NAME="Key=Name,Value=TTT_LOAD"
 
 # AWS OS Images
 # ami-9398d3e0 -> Amazon Linux AMI 2016.09.0 (HVM), SSD Volume Type
@@ -93,9 +103,9 @@ IMAGE_ID="ami-9398d3e0"
 ###############################################################################################
 
 if [[  $# -lt 2 || $# -gt 3 ]] ; then
-  printf "\n\t usage $0 <git revision|latest> <test|prod> [wait]"
+  printf "\n\t usage $0 <git revision|latest> <test|load|prod> [smoke]"
   printf "\n\t git revision   use full git revision string or latest"
-  printf "\n\t wait           wait for ec2 instance to become ready (optiona)"
+  printf "\n\t smoke           smoketest ec2 instance (optiona)"
   printf "\n\n"
   exit
 fi
@@ -118,13 +128,18 @@ if [ $OP_MODE == "test" ] ; then
     ALLOCATION_ID=$TEST_ALLOCATION_ID
     AWS_TAG2=$TEST_AWS_TAG
     AWS_NAME=$TEST_AWS_NAME
-    HOST="test.tictactoe.sveinng.com"
+    HOST=$TEST_HOST
+elif [ $OP_MODE == "load" ] ; then
+    ALLOCATION_ID=$LOAD_ALLOCATION_ID
+    AWS_TAG2=$LOAD_AWS_TAG
+    AWS_NAME=$LOAD_AWS_NAME
+    HOST=$LOAD_HOST
 elif [ $OP_MODE == "prod" ] ; then
     OP_MODE=production
     ALLOCATION_ID=$PROD_ALLOCATION_ID
     AWS_TAG2=$PROD_AWS_TAG
     AWS_NAME=$PROD_AWS_NAME
-    HOST="tictactoe.sveinng.com"
+    HOST=$PROD_HOST
 else
     log "ERR  Unknown operation mode!"
     log "ERR  Valid modes are: prod / test"
@@ -219,18 +234,13 @@ else
 fi
 
 
-# Wait for ec2 instance to start serving http
-if [ $EC2_WAIT == "wait" ] ; then
-  wait $TMP_PUBLIC_IP
+# Wait for ec2 instance to start serving http - smoketest
+if [ $EC2_WAIT == "smoke" ] ; then
+  smoke $TMP_PUBLIC_IP
 else
   log "It will be fully upgraded and operating within 4 minutes"
   log "Use the following command to monitor the setup process"
-
-  if [ $IMAGE_ID == "ami-0d77397e" ] ; then
-    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no $TMP_PUBLIC_IP"
-  else
-    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no $TMP_PUBLIC_IP"
-  fi
+  log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no $TMP_PUBLIC_IP"
 fi
 
 
@@ -245,14 +255,10 @@ else
 fi
 
 # Verify Elastic IP is activated
-if [ $EC2_WAIT == "wait" ] ; then
-  wait $HOST
+if [ $EC2_WAIT == "smoke" ] ; then
+  smoke $HOST
 else
-  if [ $IMAGE_ID == "ami-0d77397e" ] ; then
-    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ubuntu -o StrictHostKeyChecking=no $HOST"
-  else
-    log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no $HOST"
-  fi
+  log "To connect: ssh -i ~/.ssh/ttt-server.pem -l ec2-user -o StrictHostKeyChecking=no $HOST"
 fi
 
 

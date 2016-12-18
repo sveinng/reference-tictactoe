@@ -3,6 +3,7 @@ module.exports=function(injected){
     const io = require('socket.io-client');
     const RoutingContext = require('../../client/src/routing-context');
     const generateUUID = require('../../client/src/common/framework/uuid');
+    var ENV = process.env.NODE_ENV;
 
     var connectCount =0;
 
@@ -13,7 +14,7 @@ module.exports=function(injected){
 
         var routingContext = RoutingContext(inject({
             io,
-            env:"test"
+            env:ENV
         }));
 
         connectCount++;

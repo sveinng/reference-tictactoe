@@ -7,6 +7,10 @@ module.exports = {
         sessionSecret: 'tesingUberSessionSecret'
     },
 
+    test: {
+        sessionSecret: 'loadingUberSessionSecret'
+    },
+
     production: {
         sessionSecret: 'productionSessionSecret'
     }
