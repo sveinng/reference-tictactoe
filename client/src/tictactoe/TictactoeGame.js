@@ -75,6 +75,7 @@ export default function (injected) {
 
 
             const gameOver = (gameOver)=>{
+                console.debug("gameover event", gameOver);
 
                 if(this.state.currentGame.gameId===gameOver.gameId){
                     this.setState({
@@ -138,7 +139,8 @@ export default function (injected) {
             if(this.state.gameOver){
                 var gameEnd;
                 if(this.state.gameOver.type==='GameWon'){
-                    gameEnd = <span>{this.state.gameOver.move.side} won the game!</span>
+                    //gameEnd = <span>{this.state.gameOver.move.side} won the game!</span>
+                    gameEnd = <span>{this.state.gameOver.side} won the game!</span>
                 } else {
                     gameEnd = <span>Draw!</span>
                 }
