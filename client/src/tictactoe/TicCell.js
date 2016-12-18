@@ -39,7 +39,6 @@ export default function (injected) {
             commandPort.routeMessage(message);
         }
         render() {
-            console.debug("this.state", this.props);
             return <div className="ticcell" onClick={this.placeMove}>
                 {this.state.side}
             </div>
