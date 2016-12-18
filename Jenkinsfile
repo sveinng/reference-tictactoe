@@ -43,17 +43,17 @@ node {
                "API regression" : {
                    echo 'Delploy to AWS - ACCEPTANCE TESTING'
                    sh './provisioning/aws_delete_instances.sh test'
-                   sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) test wait'
+                   sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) test smoke'
                    timeout(time: 10, unit: 'MINUTES') {
                        sh 'npm run apitest'
                    }
-                   sh './provisioning/aws_delete_instances.sh test'
                }, 
                "API Capacity" : {
                    echo 'Delploy to AWS - LOAD TESTING'
-                   //sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) load wait'
+                   sh './provisioning/aws_delete_instances.sh test'
+                   sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) test smoke'
                    timeout(time: 10, unit: 'MINUTES') {
-                       echo 'Here be testing'
+                       sh 'npm run loadtest'
                    }
                }
            )
@@ -76,19 +76,16 @@ node {
        // Deploy Docker image to AWS for load testing
        stage('Production') {
             echo 'Delploy to AWS - PRODUCTION'
-            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) prod wait'
-            echo 'Waiting for system Ready'
-	    sh 'echo ./provisioning/aws_create_instance.sh $(cat build/githash.txt) prod wait > deploy.sh'
-            echo 'Waiting for system Ready'
-            timeout(time: 10, unit: 'MINUTES') {
-                echo 'Here be smoketest'
-            }
+            sh './provisioning/aws_create_instance.sh $(cat build/githash.txt) prod smoke'
+            echo 'Create deployment artifacts and archive'
+	    sh 'echo ./provisioning/aws_create_instance.sh $(cat build/githash.txt) prod smoke > deploy.sh'
             archiveArtifacts artifacts: 'deploy.sh, provisioning/aws_create_instance.sh, provisioning/template/*',
                         fingerprint: true
        }
 
        // Clean our building environment
        // This saves a little time opposed to delete everything
+       // Should be totally wiped in production setup
        stage('Cleanup') {
             echo 'prune and cleanup'
             sh 'npm prune'
@@ -103,6 +100,10 @@ node {
         throw err
 
     } finally {
+
+        // Always delete images for api and load tesing - save $$$
+        sh './provisioning/aws_delete_instances.sh test'
+        sh './provisioning/aws_delete_instances.sh load'
 
         // No matter what - notify on failure and provide data from unit and code coverage test
         notifyBuild(currentBuild.result)
