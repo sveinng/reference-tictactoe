@@ -66,10 +66,10 @@ module.exports=function(injected){
             expectGameCreated:()=>{
                 waitingFor.push("expectGameCreated");
                 routingContext.eventRouter.on('GameCreated', function(game){
-                    expect(game.gameId).not.toBeUndefined();
                     if(game.gameId===thisGame.gameId){
-                        waitingFor.pop();
+                        expect(game.side).toBe('X');
                         thisGame = game;
+                        waitingFor.pop();
                     }
                 });
                 return me;
@@ -84,10 +84,10 @@ module.exports=function(injected){
             expectGameJoined:()=>{
                 waitingFor.push("expectGameJoined");
                 routingContext.eventRouter.on('GameJoined', function(game){
-                    expect(game.gameId).not.toBeUndefined();
-                    if(game.gameId===thisGame.gameId && game.commandId===thisGame.commandId){
-                        waitingFor.pop();
+                    if(game.gameId===thisGame.gameId){
+                        expect(game.gameId).not.toBe('O');
                         thisGame = game;
+                        waitingFor.pop();
                     }
                 });
                 return me;
@@ -105,9 +105,11 @@ module.exports=function(injected){
             expectMoveMade:()=>{
                 waitingFor.push("expectMoveMade");
                 routingContext.eventRouter.on('MoveMade', function(game){
-                    expect(game.gameId).not.toBeUndefined();
-                    if(game.gameId===thisGame.gameId && game.commandId===thisGame.commandId) {
-                        waitingFor.pop();
+                    if(game.gameId===thisGame.gameId) {
+                        if ((waitingFor[waitingFor.length - 1 ])==='expectMoveMade') {
+                            expect(game.gameId).not.toBeUndefined();
+                            waitingFor.pop();
+                        }
                     }
                 });
                 return me;
@@ -115,9 +117,11 @@ module.exports=function(injected){
             expectGameWon:()=>{
                 waitingFor.push("expectGameWon");
                 routingContext.eventRouter.on('GameWon', function(game){
-                    expect(game.gameId).not.toBeUndefined();
-                    if(game.gameId===thisGame.gameId && game.commandId===thisGame.commandId){
-                        waitingFor.pop();
+                    if(game.gameId===thisGame.gameId){
+                        if ((waitingFor[waitingFor.length - 1 ])==='expectGameWon') {
+                            expect(game.side).not.toBeUndefined();
+                            waitingFor.pop();
+                        }
                     }
                 });
                 return me;

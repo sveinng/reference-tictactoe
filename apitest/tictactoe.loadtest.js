@@ -25,7 +25,7 @@ describe('TicTacToe load test', function(){
         });
     });
 
-    const count = 200;
+    const count = 100;
     const timelimit = 50000;
 
     it('should start ' + count + ' games within ' + timelimit + ' ms', function(done){
@@ -76,7 +76,6 @@ describe('TicTacToe load test', function(){
                                 userB.expectMoveMade().placeMove(1, 2).then(()=> {
                                     userB.expectMoveMade(); // By other user
                                     userA.expectMoveMade().placeMove(2, 2).expectGameWon().then(function() {
-                                        console.debug("plehhhh");
                                         userA.disconnect();
                                         userB.disconnect();
                                     })
