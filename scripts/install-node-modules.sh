@@ -11,8 +11,8 @@ RUNDIR=$(dirname $0)
 # If script is executed in the script directory - move up one level
 [ $RUNDIR = "." ] && cd ..
 
-#npm install
-yarn install
+npm install
+#yarn install
 
 cd client
 # NPM uses way to much ram and cpu - lets limit for our tiny CI server
