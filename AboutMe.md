@@ -8,5 +8,3 @@ Fjölskyldan, útivist, jeppamennska, kvikmyndir og ehhh tölvur.
 
 ### Væntingar
 Ég er hér til að sækja mér fróðleik sem nýtist á vinnustað mínum. Helst vil ég geta komið á jákvæðum breytingum með sjálfvirkum prófunum og útgáfustýringum.
-
-Dadara
